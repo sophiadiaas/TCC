@@ -1,0 +1,34 @@
+{
+  "name": "rivals-arena",
+  "version": "1.1.0",
+  "description": "Plataforma acad\u00eamica de campeonatos e comunidade gamer",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node -r ./src/env.js src/server.js",
+    "dev": "node --watch -r ./src/env.js src/server.js",
+    "db:migrate": "node -r ./src/env.js src/seed.js",
+    "demo": "node -r ./src/env.js src/demo.js",
+    "test": "node scripts/test.js",
+    "check": "node scripts/check.js",
+    "format": "prettier --write \"src/**/*.js\" \"public/**/*.{html,css,js}\" \"test/**/*.js\" \"scripts/**/*.js\" \"docs/*.md\" README.md"
+  },
+  "keywords": [],
+  "license": "UNLICENSED",
+  "type": "commonjs",
+  "dependencies": {
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.4",
+    "helmet": "^8.3.0",
+    "swagger-ui-dist": "^5.34.1",
+    "better-sqlite3": "12.4.1",
+    "dotenv": "^17.2.3"
+  },
+  "engines": {
+    "node": "20.x || 22.x || 24.x"
+  },
+  "devDependencies": {
+    "jsdom": "26.1.0",
+    "prettier": "^3.10.0"
+  },
+  "private": true
+}

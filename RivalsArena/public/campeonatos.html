@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Campeonatos | Rivals Arena</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@400;600;700&family=Pixelify+Sans:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/responsividade.css" />
+  </head>
+  <body data-pagina="campeonatos">
+    <header id="navbar"></header>
+    <main>
+      <div class="page-hero">
+        <div class="container">
+          <small>Arena</small>
+          <h1>Campeonatos</h1>
+          <p>Escolha uma competição e entre na disputa</p>
+        </div>
+      </div>
+      <section class="container secao">
+        <div class="filtros grid grid-4">
+          <label>Jogos<select id="f-jogo"></select></label
+          ><label
+            >Status<select id="f-status">
+              <option value="">Todos</option>
+              <option>Inscrições abertas</option>
+              <option>Em Andamento</option>
+              <option>Finalizada</option>
+            </select></label
+          ><label>Data (a partir de)<input type="date" id="f-data" /></label
+          ><label
+            >Participantes<select id="f-part">
+              <option value="">Qualquer quantidade</option>
+              <option value="32">Até 32</option>
+              <option value="64">Até 64</option>
+              <option value="99">Mais de 64</option>
+            </select></label
+          >
+        </div>
+        <div class="grid" id="lista"></div>
+      </section>
+    </main>
+    <footer id="footer"></footer>
+    <script src="js/main.js"></script>
+    <script src="js/campeonatos.js"></script>
+  </body>
+</html>

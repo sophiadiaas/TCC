@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Cadastro | Rivals Arena</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@400;600;700&family=Pixelify+Sans:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/responsividade.css" />
+  </head>
+  <body data-pagina="cadastro">
+    <main>
+      <div class="auth">
+        <div class="auth-card">
+          <img src="assets/images/logo.png" alt="Rivals Arena" />
+          <h1>CADASTRE-SE</h1>
+          <form id="form-cadastro" novalidate>
+            <label>Nome de usuário<input name="usuario" /></label
+            ><label>E-mail<input type="email" name="email" /></label
+            ><label>Criar Senha<input type="password" name="senha" /></label
+            ><label
+              >Confirmar Senha<input type="password" name="confirmar" /></label
+            ><button class="btn btn-bloco">CRIAR CONTA</button>
+            <div class="links">
+              <span></span><a href="login.html">Já tenho conta</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+  </body>
+</html>

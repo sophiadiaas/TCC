@@ -1,0 +1,274 @@
+PLANO DE SITUAÇÃO DE
+APRENDIZAGEM
+        Segmento                        Desenvolvimento de Sistemas
+
+ Unidade(s)                  Projeto Integrador - Unindo todas as capacidades do
+ curricular(es):             curso
+
+ Curso(s):                   Desenvolvimento de Sistemas
+
+ Instrutor (a):              [Nome do Instrutor]
+
+
+
+
+ESTRATÉGIA DE APRENDIZAGEM DESAFIADORA
+( ) Situação Problema ( X ) Projeto ( ) Pesquisa ( ) Estudo de Caso
+
+
+DESCRIÇÃO DA ESTRATÉGIA DE APRENDIZAGEM
+DESAFIADORA
+Contextualização:
+
+No competitivo mercado de eSports e gaming, as plataformas digitais precisam
+oferecer experiência fluida, tempo de resposta rápido e funcionalidades que
+atendam às necessidades da comunidade gamer. A Rivals Arena é uma startup
+brasileira focada em eSports e comunidade gamer. Ela surgiu quando um grupo de
+jogadores percebeu que era difícil organizar campeonatos amadores com estrutura
+profissional.
+
+Hoje, a empresa quer ser o "hub" onde qualquer pessoa pode criar campeonatos,
+montar times, acompanhar rankings e assistir partidas. A ideia é unir competição +
+comunidade + conteúdo em um só lugar.
+
+O público-alvo são jovens de 14 a 30 anos que jogam online e querem competir ou
+se destacar, saindo do nível "casual" e entrando no competitivo. A plataforma
+precisa ter: criação de campeonatos (tipo bracket de torneio), perfil de jogador
+(stats, ranking, histórico), sistema de matchmaking ou inscrição e interface moderna
+inspirada em jogos/Twitch/Discord.
+O Projeto:
+
+A Rivals Arena está prestes a lançar sua plataforma digital (App + Web) e precisa de
+um sistema completo e funcional. Você, como desenvolvedor(a), foi contratado para
+desenvolver a solução completa da plataforma, abrangendo Front-end, Back-end e
+Banco de Dados. O projeto deve entregar uma plataforma funcional, com telas
+responsivas, regras de negócio implementadas e banco de dados integrado.
+
+
+DESAFIO
+Executar o projeto completo de desenvolvimento de sistemas para a plataforma
+Rivals Arena, entregando:
+
+   1.​ Front-end: Interface de usuário com telas funcionais, layout responsivo,
+       design moderno e bem estruturado.
+   2.​ Back-end: API para comunicação do sistema, regras de negócio
+       implementadas, operações CRUD.
+   3.​ Banco de Dados: Estrutura para armazenamento das informações do
+       sistema, integração com o back-end.
+
+Para ajudar na execução do projeto, realize as seguintes ações:
+
+   ●​ Planejar e modelar o banco de dados da plataforma
+   ●​ Criar e estruturar o banco de dados com tabelas normalizadas e migrações.
+   ●​ Desenvolver a API com operações CRUD para as entidades do sistema.
+   ●​ Implementar as regras de negócio: Exemplo: máximo de times por
+      campeonato, sistema de pontuação, cálculo de ranking, validação de datas,
+      etc.
+   ●​ Desenvolver interface para interação do usuário com o sistema.
+   ●​ Garantir layout responsivo que funcione em desktop, tablet e mobile.
+   ●​ Integrar front-end com back-end através de requisições HTTP (RESTful
+      API).
+   ●​ Organizar o código em repositório Git com README de instruções.
+
+
+RESULTADO/ENTREGAS ESPERADOS
+   1.​ Front-end da Plataforma Rivals Arena (acessível via navegador), contendo:
+
+      Desenvolvimento de uma interface web responsiva e interativa, acessível via
+      navegador, com foco na experiência do usuário e navegação fluida. O front-
+      end deverá permitir a interação com as principais funcionalidades da
+      plataforma, incluindo autenticação de usuários, visualização de informações
+   do sistema, interação entre jogadores e participação em eventos e atividades
+   competitivas. As interfaces e funcionalidades deverão ser definidas e
+   refinadas pela equipe de desenvolvimento de acordo com o modelo de
+   negócio proposto.
+
+2.​ Back-end da Plataforma Rivals Arena (API documentada), contendo:
+
+   ●​ Desenvolvimento de uma API RESTful responsável pela lógica da
+       aplicação,
+   gerenciamento de dados e implementação das regras de negócio definidas
+   pelo sistema.
+   ●​ A API deverá possibilitar a comunicação entre o front-end e o banco de
+   dados, utilizando um framework de back-end adequado (como Node.js,
+   Spring Boot, Django ou similar), garantindo organização, escalabilidade e
+   boas práticas de desenvolvimento.
+   ●​ A API deverá suportar operações CRUD para as principais entidades do
+   sistema, a serem definidas pela equipe durante a modelagem do banco de
+   dados, como por exemplo: usuários, campeonatos, times, partidas, inscrições
+   e interações sociais.
+   ●​ Os endpoints deverão ser estruturados de forma padronizada e
+   documentados com ferramentas como Swagger ou equivalente, facilitando a
+   compreensão, integração e testes da API.
+   ●​ As regras de negócio (como pontuação, ranking, limites e validações)
+   deverão ser implementadas conforme as decisões de modelagem da equipe,
+   garantindo sua integração com o banco de dados e com as requisições do
+   front-end.
+
+3.​ Banco de Dados da Plataforma Rivals Arena (estrutura entregue via script
+    SQL ou migrations), contendo:
+
+   O banco de dados deverá ser projetado e implementado com base no modelo
+   de negócio definido pela equipe, sendo entregue por meio de scripts SQL ou
+   migrations, de acordo com a tecnologia utilizada no projeto. O
+   desenvolvimento deverá contemplar as seguintes etapas:
+
+
+   ●​ Modelagem do banco de dados em três níveis:
+         1.​ Conceitual: identificação das entidades e relacionamentos.
+         2.​ Lógica: definição da estrutura das tabelas e atributos.
+         3.​ Física: implementação do banco de dados em SQL ou migrations.
+   ●​ b. Estruturação de tabelas normalizadas, garantindo integridade dos
+      dados e definição correta de chaves primárias e estrangeiras.
+      ●​ c. Integração com o back-end, permitindo comunicação entre API e banco
+         de dados para operações CRUD.
+      ●​ d. Podem ser utilizados recursos avançados do banco de dados, como
+         JOINs, procedures ou triggers, para automação e otimização de
+         processos, de acordo com a necessidade do projeto.
+
+Observação: Todos os arquivos devem ser organizados em repositório Git.
+Entregar ao instrutor conforme prazo estabelecido.
+
+
+
+
+PLANO DE SITUAÇÃO DE APRENDIZAGEM
+
+ Capacidades (Taxonomia                              Critério de
+                                 Conhecimento
+       de Bloom)                                     Avaliação
+
+                                                       Crítico     Desejável
+
+
+                                Levantamento e
+ Analisar os requisitos
+                                análise de
+ funcionais e não funcionais                             X
+                                requisitos para
+ da plataforma Rivals Arena.
+                                sistemas web.
+
+                                Modelagem de
+                                dados: DER,
+ Modelar o banco de dados
+                                normalização,
+ identificando entidades,                                X
+                                chaves
+ atributos e relacionamentos.
+                                primárias/estrange
+                                iras.
+
+                                Linguagem SQL
+ Implementar a estrutura do
+                                (DDL, DML, DQL)
+ banco de dados utilizando                               X
+                                e ferramentas de
+ SQL ou migrations.
+                                migration.
+
+                                Construção de
+                                APIs com
+ Desenvolver API RESTful
+                                framework
+ com operações CRUD para                                 X
+                                (Node.js/Express,
+ todas as entidades.
+                                Spring Boot,
+                                Django, .NET).
+Implementar as regras de      Lógica de
+negócio da plataforma         programação
+                                                  X
+(limites de times,            aplicada a regras
+pontuação, ranking, etc.).    de negócio.
+
+                              Desenvolvimento
+                              front-end (HTML,
+Construir interfaces de
+                              CSS, JavaScript,
+usuário responsivas e                             X
+                              framework como
+funcionais.
+                              React/Vue/Angular
+                              ).
+
+                              Consumo de APIs:
+Integrar front-end e          fetch, axios,
+back-end através de           async/await,        X
+requisições HTTP.             tratamento de
+                              rotas.
+
+                              Documentação
+Documentar a API e o
+                              técnica: Swagger,
+código fonte para facilitar
+                              OpenAPI,
+manutenção.
+                              README.
+
+                              Controle de
+Organizar o código em
+                              versão com Git:
+repositório Git com                               X
+                              commits,
+versionamento adequado.
+                              branches, tags.
+
+Demonstrar iniciativa e
+                              Capacidades
+proatividade na execução
+                              Sociais             X
+das atividades sob sua
+                              (Autogestão).
+responsabilidade.
+
+Colaborar com a equipe na     Capacidades
+solução de problemas de       Sociais (Trabalho
+desenvolvimento.              em equipe).
+
+Integrar os princípios de     Capacidades
+qualidade (desempenho,        Sociais
+                                                  X
+usabilidade, segurança) ao    (Qualidade e
+sistema desenvolvido.         Eficiência).
+ESPECIFICAÇÕES DOS RECURSOS
+
+         Tipo                             Especificação
+
+ Material de
+ Consumo:
+
+                     VS Code ou IDE similar; Git e GitHub/GitLab; Insomnia ou
+                     Postman para testes de API; Swagger para documentação;
+ Ferramentas:        Framework front-end (React, Vue, Angular); Framework
+                     back-end (Node.js/Express, Spring Boot, Django, .NET);
+                     SGBD (MySQL, PostgreSQL, SQL Server, MongoDB).
+
+ EPIs:               Não se aplica.
+
+ EPCs:               Não se aplica.
+
+ Equipamentos:       Computador com acesso à internet.
+
+ Instrumentos:       Navegadores (Chrome, Firefox, Edge).
+
+                     Documentações oficiais das tecnologias escolhidas; Artigos
+ Bibliografia:       sobre API RESTful; Boas práticas de modelagem de dados;
+                     Design de interfaces responsivas.
+
+
+
+Data: //______
+
+Responsável pelo desenvolvimento: [Seu Nome]
+
+
+
+Data: //______
+
+Responsável pela validação: [Nome do Instrutor/Coordenador]
+
+
+
+[FIM DO DOCUMENTO]
+

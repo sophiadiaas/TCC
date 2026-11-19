@@ -1,0 +1,71 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> rivals-arena@1.1.0 test
+> node scripts/test.js
+
+TAP version 13
+# Subtest: autenticação, sessão persistente, validação e privacidade
+ok 1 - autenticação, sessão persistente, validação e privacidade
+  ---
+  duration_ms: 956.949194
+  ...
+# Subtest: CRUD de catálogo, times, membros e permissões
+ok 2 - CRUD de catálogo, times, membros e permissões
+  ---
+  duration_ms: 160.189899
+  ...
+# Subtest: limites, elenco, datas, duplicidades, mudança e cancelamento de inscrição
+ok 3 - limites, elenco, datas, duplicidades, mudança e cancelamento de inscrição
+  ---
+  duration_ms: 198.040616
+  ...
+# Subtest: torneio completo com três times, bye, final, histórico e ranking derivado
+ok 4 - torneio completo com três times, bye, final, histórico e ranking derivado
+  ---
+  duration_ms: 196.819978
+  ...
+# Subtest: chave com cinco times, avanços automáticos e reinício sem resultados
+ok 5 - chave com cinco times, avanços automáticos e reinício sem resultados
+  ---
+  duration_ms: 296.146322
+  ...
+# Subtest: comunidade: autoria, curtidas idempotentes, comentários e exclusão em cascata
+ok 6 - comunidade: autoria, curtidas idempotentes, comentários e exclusão em cascata
+  ---
+  duration_ms: 132.907053
+  ...
+# Subtest: migration idempotente e persistência em disco
+ok 7 - migration idempotente e persistência em disco
+  ---
+  duration_ms: 5.609027
+  ...
+# Subtest: chaves de 2 a 64 times: sempre n-1 partidas reais, campeão único e sem confrontos vazios
+ok 8 - chaves de 2 a 64 times: sempre n-1 partidas reais, campeão único e sem confrontos vazios
+  ---
+  duration_ms: 2624.136788
+  ...
+# Subtest: datas de calendário e documentação da API consistentes
+ok 9 - datas de calendário e documentação da API consistentes
+  ---
+  duration_ms: 76.463932
+  ...
+# Subtest: inicialização compatível: .env opcional e configurações sem flags recentes do Node
+ok 10 - inicialização compatível: .env opcional e configurações sem flags recentes do Node
+  ---
+  duration_ms: 185.433402
+  ...
+# Runtime verificado: v20.20.2 (linux/x64)
+# Subtest: front integrado: renderização, times, campeonatos, perfil, posts e comentários usando HTTP real
+ok 11 - front integrado: renderização, times, campeonatos, perfil, posts e comentários usando HTTP real
+  ---
+  duration_ms: 1358.748246
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4817.067785
