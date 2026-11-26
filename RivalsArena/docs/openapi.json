@@ -3,7 +3,7 @@
   "info": {
     "title": "Rivals Arena API",
     "version": "1.1.0",
-    "description": "API Node.js/Express com SQLite. Faça login aqui ou no site: o navegador envia o cookie automaticamente. Todas as mutações exigem X-Requested-With: RivalsArena (preenchido automaticamente neste Swagger). Campos desconhecidos são ignorados; não concedem permissões. IDs são numéricos. Datas são UTC ISO 8601; interface usa horário local. Não há administrador universal. Jogos iniciais são catálogo protegido, jogos criados por usuários são editáveis pelo autor."
+    "description": "API Node.js/Express com PostgreSQL no Supabase. Faça login aqui ou no site: o navegador envia o cookie automaticamente. Todas as mutações exigem X-Requested-With: RivalsArena (preenchido automaticamente neste Swagger). Campos desconhecidos são ignorados; não concedem permissões. IDs são numéricos. Datas são UTC ISO 8601; interface usa horário local. Não há administrador universal. Jogos iniciais são catálogo protegido, jogos criados por usuários são editáveis pelo autor."
   },
   "servers": [
     {

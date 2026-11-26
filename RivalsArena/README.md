@@ -1,44 +1,45 @@
 # Rivals Arena
 
-Projeto acadêmico full stack desenvolvido a partir do front-end HTML/CSS/JavaScript fornecido e do briefing EP 190. Preserva logotipo, cores, navegação e estrutura das páginas, substituindo dados locais e operações simuladas por uma API Node.js/Express integrada a um banco relacional SQLite.
+Projeto acadêmico full stack desenvolvido a partir do front-end HTML/CSS/JavaScript fornecido e do briefing EP 190. Preserva logotipo, cores, navegação e estrutura das páginas, substituindo dados locais e operações simuladas por uma API Node.js/Express integrada ao PostgreSQL do Supabase.
 
 ## Compatibilidade com Node.js 20
 
-A versão 1.1.0 substitui o módulo `node:sqlite`, indisponível no Node 20, por `better-sqlite3` 12.4.1. Mantém o mesmo formato SQLite, as migrations e os dados existentes. Os comandos carregam `.env` com `dotenv`; o arquivo é opcional e sua ausência não imprime aviso. As dependências de teste e o executor dos testes também foram ajustados para Node 20 e para o terminal do Windows.
+O backend usa o driver `pg` com consultas parametrizadas e transações no PostgreSQL do Supabase. O arquivo `.env` é carregado automaticamente e deve conter a string de conexão do banco. SQLite é usado somente pelos testes automatizados. As dependências e o executor dos testes são compatíveis com Node 20 e com o terminal do Windows.
 
 Se baixou a versão anterior, extraia esta atualização em uma **pasta nova** e execute `npm ci`. Não copie a pasta `node_modules` da versão antiga. Se já criou dados, com o servidor antigo parado copie apenas a pasta `data` para a nova pasta do projeto antes de iniciar. São compatíveis também os Node.js 22 e 24; esta revisão foi validada especificamente com Node.js 20.20.2.
 
-O driver SQLite usa um binário nativo obtido durante `npm ci`. Em Windows x64 e Node 20, a instalação usa o binário pré-compilado quando disponível. Se a rede bloquear esse download ou a arquitetura não tiver binário, a instalação pode exigir ferramentas de compilação do sistema. Não há servidor de banco separado para instalar.
+Não é necessário instalar PostgreSQL localmente; o projeto precisa de acesso de rede ao banco Supabase.
 
-## Começar em três comandos
+## Configurar e iniciar
 
-Instale **Node.js 20 (testado na versão 20.20.2)** (inclui npm). Abra a pasta `RivalsArena` no VS Code e execute no terminal:
+Instale **Node.js 20 ou superior** (inclui npm). No painel do Supabase, copie a string de conexão PostgreSQL em **Project Settings → Database → Connection string**. Copie `.env.example` para `.env` e substitua a URL de exemplo. A variável `DATABASE_URL` deve conter a URI PostgreSQL do banco, nunca a URL HTTP do projeto nem uma chave `anon`/`service_role`. O backend também aceita `SUPABASE_DB_URL` e, para compatibilidade, `SUPABASE_URL` quando contém uma URI `postgresql://`. Mantenha esse arquivo privado.
 
 ```bash
 npm ci
+npm run db:migrate
 npm test
 npm start
 ```
 
-No Windows, depois de instalar o Node, você também pode abrir `INICIAR_WINDOWS.bat`: ele instala as dependências na primeira execução e inicia o servidor.
+As migrations devem ser executadas uma vez antes do primeiro início. Elas criam o esquema e são registradas para não serem reaplicadas. No Windows, depois de configurar `.env`, abra `INICIAR_WINDOWS.bat` para iniciar o servidor.
 
-Abra **http://localhost:3000**. A documentação interativa da API fica em **http://localhost:3000/docs**. O banco e as migrations são criados automaticamente; não é preciso instalar um servidor SQL. Não abra os arquivos HTML diretamente nem use Live Server: o Node serve front e API no mesmo endereço.
+Abra **http://localhost:3000**. A documentação interativa da API fica em **http://localhost:3000/docs**. As leituras e gravações da aplicação são feitas no Supabase. Não abra os arquivos HTML diretamente nem use Live Server: o Node serve front e API no mesmo endereço.
 
 O primeiro acesso possui três jogos de catálogo. Cadastre suas contas, crie times e organize campeonatos. Não existe senha de administrador nem usuário com permissão universal. Cada organizador controla seus eventos, cada capitão controla seu time e cada autor controla seu conteúdo.
 
 ### Demonstração preenchida
 
-Em um banco ainda sem usuários, use:
+Somente em um projeto Supabase isolado para desenvolvimento, sem usuários existentes, use:
 
 ```bash
 npm run demo
 ```
 
-Contas: `demo1`, `demo2`, `demo3`, `demo4`. Senha de todas: `ArenaDemo2026!`. O demo inclui quatro times solo inscritos em uma copa e uma publicação. O campeonato começa 24 horas após a criação; para testar antes, `demo1` pode editar a data para daqui a um minuto, aguardar e clicar em **Iniciar e gerar chave**. Se o banco já tem usuários, o seed não mistura contas demo com seus dados. As credenciais acima são exclusivamente de demonstração local.
+Contas: `demo1`, `demo2`, `demo3`, `demo4`. Senha de todas: `ArenaDemo2026!`. O demo inclui quatro times solo inscritos em uma copa e uma publicação. O campeonato começa 24 horas após a criação. Não execute esse comando contra produção: as contas usam senhas conhecidas.
 
 ### Configuração opcional
 
-Copie `.env.example` para `.env` e ajuste `PORT` e `DB_PATH`. Os comandos npm leem o arquivo automaticamente. Para usar outra porta: altere `PORT=3001`. O arquivo SQLite permanece em `data/arena.sqlite` entre reinícios. Faça backup com a aplicação parada, copiando o banco; não exclua `data/` se quiser preservar os dados.
+Os comandos npm carregam `.env` automaticamente. Para usar outra porta, altere `PORT=3001`. Use a opção **Transaction pooler** do Supabase se o ambiente de hospedagem não tiver IPv6/conexão direta; mantenha a URI SSL emitida pelo painel.
 
 Também há Dockerfile e `compose.yaml`:
 
@@ -46,7 +47,7 @@ Também há Dockerfile e `compose.yaml`:
 docker compose up --build
 ```
 
-O volume `arena_data` mantém o banco. A imagem usa Node 20 e usuário sem privilégios. O Docker é opcional; sua execução não foi validada no ambiente de entrega.
+A imagem usa Node 20 e usuário sem privilégios e lê as variáveis do arquivo `.env`. O Docker é opcional.
 
 ## Funcionalidades
 
@@ -81,7 +82,7 @@ O volume `arena_data` mantém o banco. A imagem usa Node 20 e usuário sem privi
 | `src/app.js`      | Rotas REST, autorização, validações, tratamento de erros            |
 | `src/domain.js`   | Inscrições, transações, chaveamento e ranking                       |
 | `src/security.js` | Hash de senha e tokens de sessão                                    |
-| `src/db.js`       | Conexão, integridade e aplicação transacional de migrations         |
+| `src/db.js`       | Pool PostgreSQL/Supabase, consultas e transações                    |
 | `src/seed.js`     | Catálogo inicial e demonstração opcional                            |
 | `db/migrations/`  | Estrutura SQL versionada                                            |
 | `docs/`           | Modelagem, regras, rastreabilidade do briefing, OpenAPI e validação |
@@ -95,12 +96,12 @@ O volume `arena_data` mantém o banco. A imagem usa Node 20 e usuário sem privi
 | `npm start`                     | Inicia front e API na mesma aplicação               |
 | `npm run dev`                   | Reinicia o servidor ao editar arquivos              |
 | `npm run demo`                  | Habilita seed de demonstração em banco sem usuários |
-| `npm run db:migrate`            | Aplica migrations pendentes e catálogo inicial      |
+| `npm run db:migrate`            | Aplica migrations pendentes no Supabase             |
 | `npm test`                      | Executa testes de integração e regras               |
 | `npm run check`                 | Confere a sintaxe de todos os JavaScripts           |
 | `node scripts/build-openapi.js` | Regera `docs/openapi.json`                          |
 
-A suíte usa bancos temporários e não modifica `data/arena.sqlite`. As migrations são aplicadas apenas uma vez por banco, com registro em `migrations`.
+A suíte usa bancos SQLite temporários e não conecta nem altera o Supabase. As migrations do servidor são registradas na tabela `schema_migrations`.
 
 ## Decisões de escopo e operação
 
@@ -131,4 +132,5 @@ git push --tags
 Não envie `node_modules`, `.env` ou o banco de usuários. A publicação em conta externa fica por sua conta, porque nenhum destino Git foi informado.
 
 Veja `docs/RASTREABILIDADE.md` para conferir cada entrega do briefing, `docs/MODELAGEM.md` para os três níveis do banco, `docs/REGRAS.md` para as regras e `docs/VALIDACAO.md` para a evidência e os limites dos testes realizados.
+
 # TCC

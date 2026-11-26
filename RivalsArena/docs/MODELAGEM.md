@@ -34,11 +34,11 @@ erDiagram
 
 ## 2. Lógica
 
-Todas as chaves `id` são INTEGER PRIMARY KEY. Timestamps são TEXT em UTC, exceto `sessions.expires_at`, que guarda milissegundos desde epoch. Campos opcionais são indicados; demais são NOT NULL ou possuem default conforme SQL.
+As chaves `id` são BIGINT identity. Timestamps são TIMESTAMPTZ, exceto `sessions.expires_at`, que guarda milissegundos desde epoch. Campos opcionais são indicados; demais são NOT NULL ou possuem default conforme SQL.
 
 | Tabela               | Atributos                                                                                                                                                                                      | Restrições e relações                                                                                   |
 | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| users                | id, username, email, password_hash, name, bio, region, created_at                                                                                                                              | username e email UNIQUE COLLATE NOCASE                                                                  |
+| users                | id, username, email, password_hash, name, bio, region, created_at                                                                                                                              | username e email únicos sem distinção entre maiúsculas/minúsculas                                       |
 | sessions             | token_hash, user_id, expires_at                                                                                                                                                                | PK token_hash; FK users, CASCADE                                                                        |
 | games                | id, name, genre, description, platforms, owner_id opcional                                                                                                                                     | name UNIQUE; owner_id FK users; nulo para catálogo inicial                                              |
 | teams                | id, name, game_id, captain_id, description                                                                                                                                                     | name UNIQUE; FKs games e users                                                                          |
@@ -50,7 +50,7 @@ Todas as chaves `id` são INTEGER PRIMARY KEY. Timestamps são TEXT em UTC, exce
 | posts                | id, user_id, text, created_at                                                                                                                                                                  | FK users CASCADE                                                                                        |
 | likes                | post_id, user_id                                                                                                                                                                               | PK composta; FKs posts/users CASCADE                                                                    |
 | comments             | id, post_id, user_id, text, created_at                                                                                                                                                         | FKs posts/users CASCADE                                                                                 |
-| migrations           | name, applied_at                                                                                                                                                                               | PK name; controle técnico                                                                               |
+| schema_migrations    | name, applied_at                                                                                                                                                                               | PK name; controle técnico                                                                               |
 
 ### Dependências e normalização
 
@@ -58,15 +58,15 @@ Atributos de jogador e jogo não são repetidos em times, campeonatos ou publica
 
 `registration_players` não duplica arbitrariamente o elenco atual: representa o fato histórico “jogador registrado nesta inscrição”, distinto de “membro atual deste time”. Assim a mudança posterior do elenco não muda o resultado antigo. Rodada e posição determinam a estrutura da árvore; nomes dos times não são gravados em partidas.
 
-Capitão deve pertencer ao elenco, um jogador só participa uma vez por campeonato, placar não pode empatar e a capacidade não pode ser ultrapassada: são invariantes conferidos pela API. As transações `BEGIN IMMEDIATE` mantêm atomicidade das inscrições e da geração/resultados da chave. Não é permitido acesso de escrita direto ao banco durante uso normal.
+Capitão deve pertencer ao elenco, um jogador só participa uma vez por campeonato, placar não pode empatar e a capacidade não pode ser ultrapassada: são invariantes conferidos pela API. Transações PostgreSQL mantêm atomicidade das inscrições e da geração/resultados da chave. Não é permitido acesso de escrita direto ao banco durante uso normal.
 
 ## 3. Física
 
-O acesso ao SQLite usa `better-sqlite3` 12.4.1, compatível com Node.js 20. O formato do banco permanece SQLite; nenhuma migration de conversão é necessária nesta atualização.
+O backend conecta ao PostgreSQL do Supabase usando `pg`. Configure a URI de conexão em `DATABASE_URL` (ou `SUPABASE_DB_URL`); o backend exige TLS com certificado válido. O SQLite é usado somente pelo adaptador de testes.
 
-O DDL real está em `db/migrations/001_initial.sql` e `002_catalog_and_audit.sql`. A aplicação cria `migrations`, aplica arquivos em ordem e registra cada nome na mesma transação do DDL. Execute `npm run db:migrate` ou inicie o servidor. SQL usa os recursos do SQLite; não é um script compatível sem adaptação com MySQL/PostgreSQL.
+O DDL PostgreSQL está em `db/migrations/001_initial.sql`. Execute `npm run db:migrate` para aplicar migrations pendentes; cada nome fica registrado em `schema_migrations` na mesma transação do DDL. O comando é idempotente.
 
-Configurações: `PRAGMA foreign_keys=ON`, journal WAL e busy_timeout de 5.000 ms. Índices adicionais atendem busca de partidas por campeonato/rodada/posição, jogadores de inscrições, inscrições de time, membros de usuário e comentários de post. PKs e restrições UNIQUE já criam índices para os acessos correspondentes.
+Índices atendem busca de partidas por campeonato/rodada/posição, jogadores de inscrições, inscrições de time, membros de usuário, comentários de post e unicidade sem distinção de caixa para usuário/e-mail. PKs e restrições UNIQUE já criam índices para os acessos correspondentes.
 
 Exemplo de consulta de participantes:
 
@@ -80,4 +80,4 @@ JOIN users u ON u.id = rp.user_id
 ORDER BY t.id, tm.id, u.id;
 ```
 
-O banco é criado localmente ao executar o projeto e não acompanha contas reais no ZIP. O seed oferece catálogo inicial idempotente e dados demo apenas quando explicitamente habilitados.
+O seed cria o catálogo inicial no Supabase quando a tabela `games` está vazia. Dados demo só devem ser criados em um projeto Supabase isolado para desenvolvimento.

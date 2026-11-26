@@ -194,19 +194,19 @@ test("front integrado: renderização, times, campeonatos, perfil, posts e comen
       );
   }
   const d = require("../src/domain").domain(db);
-  d.run(
+  await d.run(
     "INSERT INTO users(username,email,password_hash,name) VALUES('oponente','op@example.com','hash-teste','Oponente')",
   );
-  d.run(
+  await d.run(
     "INSERT INTO teams(name,game_id,captain_id) VALUES('Time Oponente',1,2)",
   );
-  d.run("INSERT INTO team_members VALUES(2,2)");
-  d.register(1, 2, 2);
-  d.run(
+  await d.run("INSERT INTO team_members VALUES(2,2)");
+  await d.register(1, 2, 2);
+  await d.run(
     "UPDATE tournaments SET starts_at=? WHERE id=1",
     new Date(Date.now() - 1000).toISOString(),
   );
-  d.start(1, 1);
+  await d.start(1, 1);
   const key = await page("partidas.html?campeonato=1");
   await wait(() => key.document.querySelector("[data-result]"));
   assert.equal(key.document.querySelectorAll(".match").length, 1);

@@ -22,6 +22,12 @@ if errorlevel 1 (
     exit /b 1
   )
 )
+call npm run db:migrate
+if errorlevel 1 (
+  echo Nao foi possivel aplicar as migrations. Confira a DATABASE_URL no arquivo .env.
+  pause
+  exit /b 1
+)
 echo Abra http://localhost:3000 no navegador apos o servidor iniciar.
 call npm start
 pause

@@ -4,7 +4,7 @@ Execução em 11/11/2026, Node.js v20.20.2 (Linux x64). Resultados completos em 
 
 ## Testes automatizados
 
-**11 testes aprovados, zero falhas.** Os testes usam bancos isolados em memória ou temporários, com servidor Express real e requisições HTTP; não dependem de contas do banco da aplicação.
+**12 testes aprovados, zero falhas.** Os testes usam bancos isolados em memória ou temporários, com servidor Express real e requisições HTTP; não dependem de contas do banco da aplicação.
 
 | Grupo                | Evidência verificada                                                                                                                                                              |
 | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -16,7 +16,7 @@ Execução em 11/11/2026, Node.js v20.20.2 (Linux x64). Resultados completos em 
 | Reinício da chave    | Torneio de cinco times; desfaz chave sem resultados e reabre inscrições                                                                                                           |
 | Todas as capacidades | Torneios de 2 até 64 times, final sempre alcançada, exatamente n−1 partidas reais e pontuação consistente                                                                         |
 | Comunidade           | CRUD de post/comentário, texto escapado e curtida idempotente                                                                                                                     |
-| Persistência         | Fechar/reabrir SQLite conserva registros; migrations idempotentes e integridade de FKs                                                                                            |
+| Persistência         | Testes de integração usam SQLite temporário com FKs; execução contra o projeto Supabase configurado requer credenciais válidas                                                    |
 | Datas e documentação | Rejeição de calendário inválido e data sem fuso; referências OpenAPI resolvidas e cada operação implementada documentada                                                          |
 | Front integrado      | Scripts reais em DOM com servidor HTTP real: catálogo, totais, criação de time/campeonato, inscrição pelo formulário, perfil, posts, curtida, comentário e resultado de uma final |
 | Sintaxe              | Todos os arquivos JavaScript de fonte, front, scripts e testes verificados com `node --check`                                                                                     |
@@ -25,11 +25,11 @@ O teste de front usa jsdom e uma sessão de teste. Ele executa os scripts e subm
 
 ## Compatibilidade da versão 1.1.0
 
-O projeto foi instalado e executado com o binário real **Node.js v20.20.2**, a mesma versão indicada no erro relatado. A instalação foi refeita com `npm ci`, usando o novo lockfile. O acesso ao banco utiliza `better-sqlite3` 12.4.1, e jsdom 26.1.0 substitui a dependência de teste que exigia uma versão mais recente do Node.
+O projeto foi validado com **Node.js v20.20.2**. A aplicação usa `pg` para o PostgreSQL do Supabase; o adaptador `better-sqlite3` e o esquema temporário são exclusivos dos testes.
 
-O teste de compatibilidade verifica que iniciar sem `.env` funciona sem aviso e que um arquivo existente é carregado, respeitando valores já definidos no ambiente. O executor dos testes resolve a lista de arquivos em JavaScript, sem depender da expansão de `*.test.js` pelo terminal do Windows.
+O teste de compatibilidade verifica o carregamento de `.env`, respeitando valores já definidos no ambiente. O executor dos testes resolve a lista de arquivos em JavaScript, sem depender da expansão de `*.test.js` pelo terminal do Windows.
 
-Também foram conferidos os comandos reais `npm start`, `npm run demo` e `npm run db:migrate`, usando bancos temporários: API saudável, páginas e Swagger acessíveis, catálogo inicial criado e demonstração com quatro usuários. O SQLite permanece compatível com o banco da entrega anterior, sem conversão de schema.
+Os testes não usam nem alteram o banco Supabase configurado em `.env`. A aplicação requer a URI PostgreSQL e o esquema criado por `npm run db:migrate`; a conexão com o Supabase precisa ser validada no ambiente com acesso e credenciais do projeto.
 
 A execução foi validada em Linux x64. O arquivo de inicialização do Windows foi adaptado, mas não foi executado em uma máquina Windows neste ambiente.
 

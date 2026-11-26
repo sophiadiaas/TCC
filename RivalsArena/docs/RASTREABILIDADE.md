@@ -18,7 +18,7 @@ O briefing deixa a equipe definir entidades e regras específicas. Esta tabela r
 | API REST padronizada                   | `/api/`, métodos HTTP, códigos de status e erros JSON; testes HTTP de integração                                               |
 | Swagger ou equivalente                 | Swagger UI em `/docs`, OpenAPI 3.0.3 em `docs/openapi.json`, 29 caminhos documentados                                          |
 | Regras de limite, datas e pontuação    | `src/domain.js`, validações das rotas e `docs/REGRAS.md`                                                                       |
-| Banco integrado                        | SQLite persistente com better-sqlite3, conexão real Node.js, FK ativas, consultas parametrizadas                               |
+| Banco integrado                        | PostgreSQL/Supabase via `pg`, FK ativas, consultas parametrizadas e transações                                                 |
 | Modelagem conceitual                   | Entidades e cardinalidades em `docs/MODELAGEM.md`                                                                              |
 | Modelagem lógica                       | Tabelas, atributos, PK, FK e unicidade em `docs/MODELAGEM.md`                                                                  |
 | Modelagem física                       | `db/migrations/001_initial.sql` e `002_catalog_and_audit.sql`                                                                  |
@@ -29,4 +29,4 @@ O briefing deixa a equipe definir entidades e regras específicas. Esta tabela r
 | README e manutenção                    | Instalação, demonstração, estrutura, configurações, comandos, documentação e limites                                           |
 | Qualidade, eficiência e segurança      | Hash scrypt, autorização por dono, transações, índices, testes negativos e de ciclo completo                                   |
 
-SQLite foi escolhido por ser um SGBD relacional sem instalação adicional e permitir uma entrega local reproduzível. Os SGBDs citados no briefing são exemplos; não há imposição exclusiva de MySQL/PostgreSQL. A API e o banco não são mocks.
+O backend persiste os dados no PostgreSQL do Supabase. Os testes automatizados usam SQLite temporário e não se conectam ao projeto Supabase configurado no `.env`.

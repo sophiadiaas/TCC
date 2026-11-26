@@ -1,9 +1,6 @@
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
-<<<<<<< HEAD
 const http = require("node:http");
-=======
->>>>>>> 36a669341f8ca18c63ba6235f172d90831bfbde8
 const { openDatabase } = require("../src/db");
 const { seed } = require("../src/seed");
 const { createApp } = require("../src/app");
@@ -136,7 +133,6 @@ test("autenticação, sessão persistente, validação e privacidade", async (t)
   await c("usuarios/" + u.id, "DELETE", undefined, 204);
   assert.equal(await c("auth/me"), null);
 });
-<<<<<<< HEAD
 test("aceita origem HTTPS encaminhada pelo proxy do Render", async (t) => {
   const { base } = await setup(t);
   const target = new URL(base);
@@ -171,8 +167,6 @@ test("aceita origem HTTPS encaminhada pelo proxy do Render", async (t) => {
   });
   assert.equal(response.statusCode, 201);
 });
-=======
->>>>>>> 36a669341f8ca18c63ba6235f172d90831bfbde8
 test("CRUD de catálogo, times, membros e permissões", async (t) => {
   const { client } = await setup(t),
     a = client(),
@@ -409,7 +403,7 @@ test("comunidade: autoria, curtidas idempotentes, comentários e exclusão em ca
   await a("posts/" + p.id, "DELETE", undefined, 204);
   await a("posts/" + p.id, "GET", undefined, 404);
 });
-test("migration idempotente e persistência em disco", async (t) => {
+test("esquema de teste e persistência em disco", async (t) => {
   const fs = require("node:fs"),
     os = require("node:os"),
     path = require("node:path");
@@ -426,7 +420,13 @@ test("migration idempotente e persistência em disco", async (t) => {
   db.close();
   db = openDatabase(file);
   assert.deepEqual(db.prepare("SELECT name FROM games").all(), names);
-  assert.equal(db.prepare("SELECT COUNT(*) n FROM migrations").get().n, 2);
+  assert.ok(
+    db
+      .prepare(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='users'",
+      )
+      .get(),
+  );
   assert.equal(db.prepare("SELECT text FROM posts").get().text, "persistente");
   assert.equal(db.prepare("PRAGMA foreign_key_check").all().length, 0);
   db.close();
@@ -438,7 +438,7 @@ test("chaves de 2 a 64 times: sempre n-1 partidas reais, campeão único e sem c
     await seed(db);
     const d = domain(db);
     for (let i = 1; i <= count; i++) {
-      d.run(
+      await d.run(
         "INSERT INTO users(id,username,email,password_hash,name) VALUES(?,?,?,?,?)",
         i,
         "u" + i,
@@ -446,42 +446,42 @@ test("chaves de 2 a 64 times: sempre n-1 partidas reais, campeão único e sem c
         "hash-teste",
         "User " + i,
       );
-      d.run(
+      await d.run(
         "INSERT INTO teams(id,name,game_id,captain_id) VALUES(?,?,1,?)",
         i,
         "Time " + i,
         i,
       );
-      d.run("INSERT INTO team_members VALUES(?,?)", i, i);
+      await d.run("INSERT INTO team_members VALUES(?,?)", i, i);
     }
-    d.run(
+    await d.run(
       "INSERT INTO tournaments(id,name,game_id,owner_id,capacity,team_size,starts_at) VALUES(1,'Teste',1,1,64,1,?)",
       new Date(Date.now() + 3600000).toISOString(),
     );
-    for (let i = 1; i <= count; i++) d.register(1, i, i);
-    d.run(
+    for (let i = 1; i <= count; i++) await d.register(1, i, i);
+    await d.run(
       "UPDATE tournaments SET starts_at=? WHERE id=1",
       new Date(Date.now() - 1000).toISOString(),
     );
-    d.start(1, 1);
+    await d.start(1, 1);
     let played = 0;
-    while (d.required("tournaments", 1).status !== "finished") {
-      const match = d.one(
+    while ((await d.required("tournaments", 1)).status !== "finished") {
+      const match = await d.one(
         "SELECT * FROM matches WHERE status='ready' ORDER BY round,position LIMIT 1",
       );
       assert.ok(match, "Chave travada para " + count);
       assert.ok(match.team_a && match.team_b);
       assert.notEqual(match.team_a, match.team_b);
-      d.result(match.id, { score_a: 2, score_b: 1 }, 1);
+      await d.result(match.id, { score_a: 2, score_b: 1 }, 1);
       assert.ok(++played <= count - 1);
     }
     assert.equal(played, count - 1);
     assert.equal(
-      d.ranking().reduce((s, r) => s + r.pontos, 0),
+      (await d.ranking()).reduce((s, r) => s + r.pontos, 0),
       (count - 1) * 2,
     );
     assert.ok(
-      d.one("SELECT winner_id FROM matches ORDER BY round DESC LIMIT 1")
+      (await d.one("SELECT winner_id FROM matches ORDER BY round DESC LIMIT 1"))
         .winner_id,
     );
     db.close();
