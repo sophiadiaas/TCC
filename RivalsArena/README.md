@@ -39,7 +39,7 @@ Contas: `demo1`, `demo2`, `demo3`, `demo4`. Senha de todas: `ArenaDemo2026!`. O 
 
 ### Configuração opcional
 
-Os comandos npm carregam `.env` automaticamente. Para usar outra porta, altere `PORT=3001`. Use a opção **Transaction pooler** do Supabase se o ambiente de hospedagem não tiver IPv6/conexão direta; mantenha a URI SSL emitida pelo painel.
+Os comandos npm carregam `.env` automaticamente. Para usar outra porta, altere `PORT=3001`. Use a URI do pooler do Supabase se o ambiente de hospedagem não tiver IPv6/conexão direta. Se o provedor apresentar erro de certificado, baixe o CA do projeto em **Supabase → Settings → Database → SSL Configuration** e configure o conteúdo PEM em `SUPABASE_CA_CERT` no ambiente do Render. A validação TLS continua habilitada; não desative a verificação do certificado.
 
 Também há Dockerfile e `compose.yaml`:
 

@@ -58,7 +58,9 @@ function openDatabase(filename) {
 
   const pool = new Pool({
     connectionString,
-    ssl: { rejectUnauthorized: true },
+    ssl: process.env.SUPABASE_CA_CERT
+      ? { ca: process.env.SUPABASE_CA_CERT, rejectUnauthorized: true }
+      : { rejectUnauthorized: true },
     max: Number(process.env.DB_POOL_MAX) || 10,
   });
   return {
