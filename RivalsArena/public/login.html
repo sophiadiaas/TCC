@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Login | Rivals Arena</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@400;600;700&family=Pixelify+Sans:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/responsividade.css" />
+  </head>
+  <body data-pagina="login">
+    <main>
+      <div class="auth">
+        <div class="auth-card">
+          <img src="assets/images/logo.png" alt="Rivals Arena" />
+          <h1>ENTRAR NA ARENA</h1>
+          <form id="form-login" novalidate>
+            <label>E-mail ou nome de usuário<input name="login" /></label
+            ><label>Senha<input type="password" name="senha" /></label
+            ><label style="font-size: 13px"
+              ><input
+                type="checkbox"
+                name="lembrar"
+                style="width: auto; margin-right: 6px"
+              />Lembrar login</label
+            ><button class="btn btn-bloco">Entrar na Arena</button>
+            <div class="links">
+              <a href="index.html">Voltar ao início</a
+              ><a href="cadastro.html">Criar conta</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+  </body>
+</html>

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Início | Rivals Arena</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@400;600;700&family=Pixelify+Sans:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/responsividade.css" />
+  </head>
+  <body data-pagina="index">
+    <header id="navbar"></header>
+    <main>
+      <section class="hero">
+        <div class="container">
+          <small class="pixel">Competição ● Comunidade ● Arena</small>
+          <h1><span>Entre na arena.</span> Supere seus rivais.</h1>
+          <p>
+            Uma plataforma para jogadores competirem, participarem de
+            campeonatos e conquistarem seu espaço no ranking
+          </p>
+          <a class="btn" href="campeonatos.html">Explorar Campeonatos</a
+          ><a class="btn btn-contorno" href="jogos.html">Conheça os Jogos</a>
+        </div>
+      </section>
+      <section class="stats">
+        <div class="container grid grid-4">
+          <div class="stat">
+            <b id="stat-usuarios">0</b>Jogadores cadastrados
+          </div>
+          <div class="stat">
+            <b id="stat-campeonatos">0</b>Campeonatos criados
+          </div>
+          <div class="stat"><b id="stat-partidas">0</b>Partidas disputadas</div>
+          <div class="stat"><b id="stat-jogos">0</b>Jogos disponíveis</div>
+        </div>
+      </section>
+      <section class="secao container">
+        <h2>Jogos da Rivals Arena</h2>
+        <p>Conheça os nossos jogos criados por nossa empresa.</p>
+        <div class="grid" id="lista-jogos"></div>
+      </section>
+      <section class="secao container">
+        <h2>Campeonatos em destaque</h2>
+        <p>Participe das competições mais disputadas.</p>
+        <div class="grid" id="lista-campeonatos"></div>
+      </section>
+      <section class="secao container">
+        <h2>Ranking em destaque</h2>
+        <p>Os jogadores com maior pontuação.</p>
+        <div id="mini-ranking"></div>
+      </section>
+    </main>
+    <footer id="footer"></footer>
+    <script src="js/main.js"></script>
+    <script src="js/home.js"></script>
+  </body>
+</html>

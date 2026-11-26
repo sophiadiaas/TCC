@@ -1,0 +1,11 @@
+services:
+  arena:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+    volumes:
+      - arena_data:/app/data
+volumes:
+  arena_data:
