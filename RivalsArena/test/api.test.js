@@ -1,6 +1,9 @@
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
+<<<<<<< HEAD
 const http = require("node:http");
+=======
+>>>>>>> 36a669341f8ca18c63ba6235f172d90831bfbde8
 const { openDatabase } = require("../src/db");
 const { seed } = require("../src/seed");
 const { createApp } = require("../src/app");
@@ -133,6 +136,7 @@ test("autenticação, sessão persistente, validação e privacidade", async (t)
   await c("usuarios/" + u.id, "DELETE", undefined, 204);
   assert.equal(await c("auth/me"), null);
 });
+<<<<<<< HEAD
 test("aceita origem HTTPS encaminhada pelo proxy do Render", async (t) => {
   const { base } = await setup(t);
   const target = new URL(base);
@@ -167,6 +171,8 @@ test("aceita origem HTTPS encaminhada pelo proxy do Render", async (t) => {
   });
   assert.equal(response.statusCode, 201);
 });
+=======
+>>>>>>> 36a669341f8ca18c63ba6235f172d90831bfbde8
 test("CRUD de catálogo, times, membros e permissões", async (t) => {
   const { client } = await setup(t),
     a = client(),

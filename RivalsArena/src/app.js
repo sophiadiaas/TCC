@@ -11,7 +11,10 @@ const {
 } = require("./security");
 function createApp(db) {
   const app = express();
+<<<<<<< HEAD
   app.set("trust proxy", 1);
+=======
+>>>>>>> 36a669341f8ca18c63ba6235f172d90831bfbde8
   app.disable("x-powered-by");
   const d = domain(db);
   const {
