@@ -33,7 +33,14 @@ async function carregarTimes() {
         )
         .join("") || "";
     if (!times.length)
-      renderState(q("times"), "empty", "Ainda não há times cadastrados.");
+      renderState(
+        q("times"),
+        "empty",
+        "Ainda não há times cadastrados.",
+        undefined,
+        undefined,
+        { mascot: true },
+      );
   } catch (error) {
     renderState(
       q("times"),

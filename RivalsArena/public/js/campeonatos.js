@@ -44,6 +44,7 @@ function filtrar() {
         });
         filtrar();
       },
+      { mascot: true },
     );
   }
 }

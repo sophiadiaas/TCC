@@ -45,6 +45,7 @@ async function carregarInicio() {
       championships.find(
         (championship) => championship.status_code === "open",
       ) || championships[0];
+    q("destaque-mascote").hidden = Boolean(featured);
     if (featured) {
       const statusClass =
         { open: "open", running: "live", finished: "done" }[
@@ -131,6 +132,7 @@ async function carregarInicio() {
       element.textContent = "—";
     });
     q("destaque-dot").className = "dot";
+    q("destaque-mascote").hidden = true;
     q("destaque-nome").textContent = "Dados temporariamente indisponíveis";
     q("destaque-status").textContent =
       "Não foi possível carregar as inscrições";

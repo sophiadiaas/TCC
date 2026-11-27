@@ -85,6 +85,29 @@ const iniciais = (name) =>
     .join("")
     .toUpperCase();
 
+function registerMascotFilter() {
+  const namespace = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(namespace, "svg");
+  const defs = document.createElementNS(namespace, "defs");
+  const filter = document.createElementNS(namespace, "filter");
+  const transfer = document.createElementNS(namespace, "feComponentTransfer");
+  const alpha = document.createElementNS(namespace, "feFuncA");
+
+  svg.setAttribute("aria-hidden", "true");
+  svg.setAttribute("focusable", "false");
+  svg.setAttribute("width", "0");
+  svg.setAttribute("height", "0");
+  filter.setAttribute("id", "rivals-mascot-alpha");
+  alpha.setAttribute("type", "linear");
+  alpha.setAttribute("slope", "20");
+  transfer.append(alpha);
+  filter.append(transfer);
+  defs.append(filter);
+  svg.append(defs);
+  document.body.append(svg);
+}
+registerMascotFilter();
+
 function toast(message, type) {
   const element = document.createElement("div");
   element.className = "toast " + (type || "");
@@ -95,11 +118,30 @@ function toast(message, type) {
   setTimeout(() => element.remove(), 3200);
 }
 
-function renderState(target, type, message, actionLabel, onAction) {
+function renderState(
+  target,
+  type,
+  message,
+  actionLabel,
+  onAction,
+  options = {},
+) {
   const state = document.createElement("div");
   state.className = `state state-${type}`;
   state.setAttribute("role", type === "error" ? "alert" : "status");
   state.setAttribute("aria-live", type === "error" ? "assertive" : "polite");
+
+  if (options.mascot) {
+    state.classList.add("state-with-mascot");
+    const mascot = document.createElement("img");
+    mascot.className = "state-mascot";
+    mascot.src = "assets/images/capivara.png";
+    mascot.alt = "";
+    mascot.setAttribute("aria-hidden", "true");
+    mascot.loading = "lazy";
+    mascot.decoding = "async";
+    state.append(mascot);
+  }
 
   const icon = document.createElement("span");
   icon.className = `state-icon state-icon-${type}`;

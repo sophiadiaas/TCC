@@ -112,6 +112,7 @@ test("front integrado: renderização, times, campeonatos, perfil, posts e comen
     home.document.querySelector("#destaque-nome").textContent,
     "Nenhum campeonato cadastrado",
   );
+  assert.equal(home.document.querySelector("#destaque-mascote").hidden, false);
   const guestProfile = await page("perfil.html", new CookieJar());
   await wait(
     () =>
@@ -177,6 +178,10 @@ test("front integrado: renderização, times, campeonatos, perfil, posts e comen
   assert.equal(
     updatedHome.document.querySelector("#destaque-nome").textContent,
     "Copa do DOM",
+  );
+  assert.equal(
+    updatedHome.document.querySelector("#destaque-mascote").hidden,
+    true,
   );
   const cup = await page("campeonatos.html?id=1");
   await wait(() => cup.document.querySelector("#inscrever"));

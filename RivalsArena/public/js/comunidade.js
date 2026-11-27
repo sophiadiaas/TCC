@@ -17,6 +17,9 @@ async function renderPosts() {
         q("posts"),
         "empty",
         "Ainda não há publicações. Seja a primeira pessoa a compartilhar algo.",
+        undefined,
+        undefined,
+        { mascot: true },
       );
   } catch (error) {
     renderState(

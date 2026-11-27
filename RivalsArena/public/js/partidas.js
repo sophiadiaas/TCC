@@ -28,6 +28,7 @@ async function render() {
       "A chave ainda não foi gerada. Consulte os detalhes do campeonato para saber quando ela estará disponível.",
       "Ver detalhes do campeonato",
       () => (location.href = "campeonatos.html?id=" + tid),
+      { mascot: true },
     );
   }
   q("voltar-camp").href = "campeonatos.html?id=" + tid;
