@@ -1,7 +1,10 @@
 let times = [],
   jogos = [];
 const options = () =>
-  jogos.map((j) => `<option value="${j.id}">${esc(j.nome)}</option>`).join("");
+  jogos
+    .filter(jogoDisponivel)
+    .map((j) => `<option value="${j.id}">${esc(j.nome)}</option>`)
+    .join("");
 async function carregarTimes() {
   const stopLoading = startLoading(q("times"), "Carregando times...");
   q("times").setAttribute("aria-busy", "true");
@@ -12,7 +15,7 @@ async function carregarTimes() {
       times
         .map(
           (t) =>
-            `<article class="card"><div class="card-img">${esc(t.nome)}</div><div class="card-corpo"><div class="card-heading"><h3>${esc(t.nome)}</h3><span class="tag">${esc(t.jogo)}</span></div><p>${esc(t.description || "Sem descrição.")}</p><p><strong>Elenco:</strong> ${t.membros.map((m) => esc(m.usuario)).join(", ") || "Nenhum integrante"}</p><p>${t.locked ? "Elenco bloqueado por inscrição" : "Elenco aberto (até 8 membros)"}</p>${
+            `<article class="card"><div class="card-img">${esc(t.nome)}</div><div class="card-corpo"><div class="card-heading"><h3>${esc(t.nome)}</h3><span class="tag">${esc(t.jogo)}${jogoDisponivel(t.jogo) ? "" : " · Em breve"}</span></div><p>${esc(t.description || "Sem descrição.")}</p><p><strong>Elenco:</strong> ${t.membros.map((m) => esc(m.usuario)).join(", ") || "Nenhum integrante"}</p><p>${t.locked ? "Elenco bloqueado por inscrição" : "Elenco aberto (até 8 membros)"}</p>${
               u
                 ? `<div class="acoes">${t.captain_id === u.id ? `<button class="btn" data-edit="${t.id}">Editar time</button><button class="btn btn-outline" data-delete="${t.id}">Excluir time</button>` : t.membros.some((m) => m.id === u.id) ? `<button class="btn btn-outline" data-leave="${t.id}">Sair do time</button>` : `<button class="btn" data-join="${t.id}">Entrar no time</button>`}</div>${
                     t.captain_id === u.id

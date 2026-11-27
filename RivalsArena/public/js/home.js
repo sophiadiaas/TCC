@@ -19,7 +19,10 @@ async function carregarInicio() {
 
     for (const [key, value] of Object.entries(stats)) {
       const element = q("stat-" + key);
-      if (element) element.textContent = value.toLocaleString("pt-BR");
+      if (element)
+        element.textContent = (
+          key === "jogos" ? games.filter(jogoDisponivel).length : value
+        ).toLocaleString("pt-BR");
     }
 
     const counts = {
@@ -101,10 +104,16 @@ async function carregarInicio() {
     q("busca").dispatchEvent(new Event("input"));
 
     q("jogos-reais").innerHTML = games
-      .map(
-        (game) =>
-          `<article class="game"><div class="game-banner"><span>${esc(game.nome)}</span></div><div class="game-info"><h3>${esc(game.nome)}</h3><p>${esc(game.resumo || game.description || "Descrição indisponível.")}</p><a class="btn btn-primary btn-sm" href="jogos.html?id=${game.id}">Conhecer o jogo</a></div></article>`,
-      )
+      .map((game) => {
+        const available = jogoDisponivel(game);
+        const description = available
+          ? game.resumo || game.description || "Descrição indisponível."
+          : "Este jogo estará disponível em breve na Rivals Arena.";
+        const action = available
+          ? `<a class="btn btn-primary btn-sm" href="jogos.html?id=${game.id}">Conhecer o jogo</a>`
+          : '<span class="tag tag-status status-unknown game-status">Em breve</span>';
+        return `<article class="game${available ? "" : " game-upcoming"}"><div class="game-banner"><span>${esc(game.nome)}</span></div><div class="game-info"><h3>${esc(game.nome)}</h3><p>${esc(description)}</p>${action}</div></article>`;
+      })
       .join("");
     if (!games.length)
       renderState(

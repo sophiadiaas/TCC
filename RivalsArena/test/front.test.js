@@ -97,6 +97,16 @@ test("front integrado: renderização, times, campeonatos, perfil, posts e comen
   );
   await wait(() => home.document.querySelectorAll("#jogos-reais .game").length);
   assert.equal(home.document.querySelectorAll("#jogos-reais .game").length, 3);
+  assert.equal(home.document.querySelector("#stat-jogos").textContent, "1");
+  assert.equal(
+    home.document.querySelectorAll("#jogos-reais .game-status").length,
+    2,
+  );
+  assert.equal(
+    home.document.querySelectorAll('#jogos-reais a[href^="jogos.html?id="]')
+      .length,
+    1,
+  );
   assert.equal(home.document.querySelectorAll("#lista-itens .row").length, 0);
   assert.equal(
     home.document.querySelector("#destaque-nome").textContent,
@@ -117,6 +127,12 @@ test("front integrado: renderização, times, campeonatos, perfil, posts e comen
   const times = await page("times.html");
   await wait(() => times.document.querySelector("#novo-time"));
   times.document.querySelector("#novo-time").click();
+  assert.deepEqual(
+    [...times.document.querySelectorAll("#time-jogo option")].map(
+      (option) => option.textContent,
+    ),
+    ["Capivarada"],
+  );
   times.document.querySelector("[name=nome]").value = "Time do DOM";
   times.document.querySelector("[name=description]").value =
     "Criado pelo formulário";
@@ -132,6 +148,12 @@ test("front integrado: renderização, times, campeonatos, perfil, posts e comen
   const camps = await page("campeonatos.html");
   await wait(() => camps.document.querySelector("#criar-camp"));
   camps.document.querySelector("#criar-camp").click();
+  assert.deepEqual(
+    [...camps.document.querySelectorAll("#camp-jogo option")].map(
+      (option) => option.textContent,
+    ),
+    ["Capivarada"],
+  );
   camps.document.querySelector("[name=nome]").value = "Copa do DOM";
   camps.document.querySelector("[name=starts_at]").value = new Date(
     Date.now() + 3600000,
@@ -225,6 +247,31 @@ test("front integrado: renderização, times, campeonatos, perfil, posts e comen
     const w = await page(path);
     if (path === "jogos.html")
       await wait(() => w.document.querySelector("#lista-jogos .card"));
+    if (path === "jogos.html") {
+      assert.equal(w.document.querySelectorAll("#lista-jogos .card").length, 3);
+      assert.equal(
+        w.document.querySelectorAll("#lista-jogos .tag-status.status-unknown")
+          .length,
+        2,
+      );
+    }
+    if (path === "jogos.html?id=2") {
+      await wait(() =>
+        w.document.querySelector("#detalhe .game-launch-status"),
+      );
+      const notice = w.document.querySelector(
+        "#detalhe .game-launch-status",
+      ).textContent;
+      assert.ok(
+        notice.includes("Em breve") &&
+          notice.includes("ainda não está disponível"),
+      );
+      assert.equal(
+        w.document.querySelectorAll('#detalhe a[href="campeonatos.html"]')
+          .length,
+        0,
+      );
+    }
     if (path.startsWith("partidas"))
       await wait(() =>
         w.document.querySelector("#chave").textContent.includes("ainda não"),

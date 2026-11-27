@@ -517,6 +517,23 @@ p {
   font-size: 2.6rem;
   text-transform: uppercase;
 }
+.game-upcoming .game-banner {
+  color: var(--cor-cinza-claro);
+  background: var(--cor-superficie-2);
+}
+.game-status {
+  align-self: flex-start;
+}
+.game-launch-status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+.game-launch-status p {
+  color: var(--cor-cinza-claro);
+}
 .game-info {
   display: flex;
   flex-direction: column;
@@ -1449,20 +1466,14 @@ tbody tr:hover {
 /* ===== Rodapé ===== */
 .footer {
   background: var(--cor-preto);
-  border-top: 3px solid var(--cor-laranja);
-  padding: 2.5rem 0 1.8rem;
+  border-top: 1px solid var(--cor-borda);
+  padding: 1.2rem 0 0.85rem;
 }
 .footer-inner {
   display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
-  gap: 1.5rem 2.5rem;
-}
-.footer-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem 1.4rem;
-  font-size: 0.88rem;
+  grid-template-columns: minmax(120px, 160px) minmax(0, 1fr);
+  align-items: start;
+  gap: 0.9rem 2rem;
 }
 .footer-links a:hover {
   color: var(--cor-laranja);
@@ -1481,9 +1492,10 @@ tbody tr:hover {
 }
 .copy {
   grid-column: 1 / -1;
-  padding-top: 1.2rem;
-  border-top: 1px solid var(--cor-borda);
-  font-size: 0.875rem;
+  margin: 0;
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--cor-borda-suave);
+  font-size: 0.8rem;
   color: var(--cor-cinza);
 }
 
@@ -1836,29 +1848,38 @@ tbody tr:hover {
 .footer-groups {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1.5rem;
+  gap: 1rem 1.5rem;
 }
 .footer-groups h2 {
-  margin-bottom: 0.55rem;
+  margin-bottom: 0.3rem;
   color: var(--cor-laranja-claro);
   font-family: var(--font-display);
-  font-size: 1.2rem;
+  font-size: 1.05rem;
 }
 .footer-links {
   display: grid;
-  gap: 0.35rem;
+  gap: 0.1rem 0.75rem;
+}
+.footer-primary-links {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 .footer-links a {
-  min-height: 44px;
+  min-height: 34px;
   display: inline-flex;
   align-items: center;
   color: var(--cor-cinza-claro);
+  font-size: 0.875rem;
+  line-height: 1.3;
 }
 .footer-links a:hover {
   color: var(--cor-laranja-claro);
 }
 .footer .brand {
   width: fit-content;
+  align-self: start;
+  margin: 0;
+  padding: 0.35rem 0.55rem;
+  font-size: 1.25rem;
 }
 .tabela-wrap {
   overscroll-behavior-x: contain;
@@ -1926,6 +1947,9 @@ th {
   .footer-groups {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+  .footer-groups > section:first-child {
+    grid-column: 1 / -1;
+  }
   .state-loading {
     flex-wrap: wrap;
   }
@@ -1936,8 +1960,14 @@ th {
 }
 @media (max-width: 560px) {
   .footer-groups {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem 1rem;
+  }
+  .footer-primary-links {
+    column-gap: 0.5rem;
+  }
+  .footer-links a {
+    min-height: 40px;
   }
   .composer-actions {
     align-items: stretch;

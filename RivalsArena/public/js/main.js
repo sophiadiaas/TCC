@@ -148,6 +148,15 @@ function statusCampeonato(championship) {
   );
 }
 
+function jogoDisponivel(game) {
+  const name = typeof game === "string" ? game : game?.nome || game?.name;
+  return (
+    String(name || "")
+      .trim()
+      .toLocaleLowerCase("pt-BR") === "capivarada"
+  );
+}
+
 function abrirModal(html, success) {
   fecharModal();
   const backdrop = document.createElement("div");
@@ -181,11 +190,22 @@ function cardCampeonato(championship) {
     { open: "open", running: "running", finished: "finished" }[
       championship.status_code
     ] || "unknown";
-  return `<article class="card"><div class="card-img">${esc(championship.jogo || championship.titulo || championship.nome)}</div><div class="card-corpo"><div class="card-heading"><h3>${esc(championship.nome)}</h3><span class="tag tag-status status-${statusClass}">${esc(statusCampeonato(championship))}</span></div><div class="card-meta"><span><strong>Jogo:</strong> ${esc(championship.jogo || "—")}</span><span><strong>Início:</strong> ${esc(startLabel)}</span><span><strong>Times:</strong> ${championship.inscritos}/${championship.limite}</span></div><a class="btn btn-laranja" href="campeonatos.html?id=${championship.id}">Ver detalhes e inscrição</a></div></article>`;
+  const gameStatus = jogoDisponivel(championship.jogo) ? "" : " · Em breve";
+  return `<article class="card"><div class="card-img">${esc(championship.jogo || championship.titulo || championship.nome)}</div><div class="card-corpo"><div class="card-heading"><h3>${esc(championship.nome)}</h3><span class="tag tag-status status-${statusClass}">${esc(statusCampeonato(championship))}</span></div><div class="card-meta"><span><strong>Jogo:</strong> ${esc(championship.jogo || "—")}${gameStatus}</span><span><strong>Início:</strong> ${esc(startLabel)}</span><span><strong>Times:</strong> ${championship.inscritos}/${championship.limite}</span></div><a class="btn btn-laranja" href="campeonatos.html?id=${championship.id}">Ver detalhes e inscrição</a></div></article>`;
 }
 
 function cardJogo(game) {
-  return `<article class="card"><div class="card-img">${esc(game.titulo || game.nome)}</div><div class="card-corpo"><h3>${esc(game.nome)}</h3><span class="tag">${esc(game.genero || game.tag || "Jogo da Arena")}</span><p>${esc(game.resumo || game.description || "")}</p><p class="card-meta">${esc(game.plataformas || "")}</p><a class="btn btn-laranja" href="jogos.html?id=${game.id}">Conhecer o jogo</a></div></article>`;
+  const available = jogoDisponivel(game);
+  const status = available
+    ? `<span class="tag">${esc(game.genero || game.tag || "Jogo da Arena")}</span>`
+    : '<span class="tag tag-status status-unknown game-status">Em breve</span>';
+  const description = available
+    ? game.resumo || game.description || ""
+    : "Este jogo estará disponível em breve na Rivals Arena.";
+  const action = available
+    ? `<a class="btn btn-laranja" href="jogos.html?id=${game.id}">Conhecer o jogo</a>`
+    : "";
+  return `<article class="card"><div class="card-img">${esc(game.titulo || game.nome)}</div><div class="card-corpo"><h3>${esc(game.nome)}</h3>${status}<p>${esc(description)}</p>${available ? `<p class="card-meta">${esc(game.plataformas || "")}</p>` : ""}${action}</div></article>`;
 }
 
 function montarLayout() {
@@ -301,7 +321,7 @@ function montarLayout() {
     footer.innerHTML = `<div class="container footer-inner">
       <a class="brand" href="index.html" aria-label="Rivals Arena, voltar ao início">Rivals<br>Arena</a>
       <div class="footer-groups">
-        <section><h2>Navegue</h2><ul class="footer-links">
+        <section><h2>Navegue</h2><ul class="footer-links footer-primary-links">
           <li><a href="campeonatos.html">Campeonatos</a></li>
           <li><a href="jogos.html">Jogos</a></li>
           <li><a href="comunidade.html">Comunidade</a></li>

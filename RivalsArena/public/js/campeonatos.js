@@ -56,8 +56,15 @@ function campeonatoForm(c) {
         .toISOString()
         .slice(0, 16)
     : "";
+  const gameOptions = jogos
+    .filter((game) => jogoDisponivel(game) || game.id === c?.game_id)
+    .map(
+      (game) =>
+        `<option value="${game.id}" ${game.id === c?.game_id ? "selected" : ""}>${esc(game.nome)}${jogoDisponivel(game) ? "" : " — Em breve"}</option>`,
+    )
+    .join("");
   abrirModal(
-    `<h2>${c ? "Editar" : "Criar"} campeonato</h2><form id="camp-form"><label for="camp-nome">Nome<input id="camp-nome" name="nome" required minlength="3" maxlength="100" value="${esc(c?.nome || "")}"></label><label for="camp-jogo">Jogo<select id="camp-jogo" name="game_id">${jogos.map((j) => `<option value="${j.id}" ${j.id === c?.game_id ? "selected" : ""}>${esc(j.nome)}</option>`).join("")}</select></label><label for="camp-limite">Limite de times (2–64)<input id="camp-limite" type="number" name="capacity" min="2" max="64" value="${c?.capacity || 8}" required></label><label for="camp-jogadores">Jogadores por time (1–8)<input id="camp-jogadores" type="number" name="team_size" min="1" max="8" value="${c?.team_size || 1}" required></label><label for="camp-inicio">Início (seu horário local)<input id="camp-inicio" type="datetime-local" name="starts_at" value="${localDate}" required></label><p>As inscrições encerram no horário de início. A partir dele, o organizador pode gerar a chave com pelo menos dois times.</p><button class="btn" type="submit">Salvar</button><button type="button" class="btn btn-outline" data-close-modal>Cancelar</button></form>`,
+    `<h2>${c ? "Editar" : "Criar"} campeonato</h2><form id="camp-form"><label for="camp-nome">Nome<input id="camp-nome" name="nome" required minlength="3" maxlength="100" value="${esc(c?.nome || "")}"></label><label for="camp-jogo">Jogo<select id="camp-jogo" name="game_id">${gameOptions}</select></label><label for="camp-limite">Limite de times (2–64)<input id="camp-limite" type="number" name="capacity" min="2" max="64" value="${c?.capacity || 8}" required></label><label for="camp-jogadores">Jogadores por time (1–8)<input id="camp-jogadores" type="number" name="team_size" min="1" max="8" value="${c?.team_size || 1}" required></label><label for="camp-inicio">Início (seu horário local)<input id="camp-inicio" type="datetime-local" name="starts_at" value="${localDate}" required></label><p>As inscrições encerram no horário de início. A partir dele, o organizador pode gerar a chave com pelo menos dois times.</p><button class="btn" type="submit">Salvar</button><button type="button" class="btn btn-outline" data-close-modal>Cancelar</button></form>`,
   );
   q("camp-form").onsubmit = async (e) => {
     e.preventDefault();
@@ -79,7 +86,7 @@ async function abrirInscricao(id) {
       )
     : [];
   abrirModal(
-    `<h2>${esc(c.nome)}</h2><p>${esc(c.jogo)} · ${esc(statusCampeonato(c))} · ${c.inscritos}/${c.limite} times</p><p>Início: ${esc(new Date(c.starts_at).toLocaleString("pt-BR"))} · ${c.team_size} jogador(es) por time</p><div class="acoes">${owned && c.status_code === "open" ? '<button class="btn" id="editar-camp">Editar</button><button class="btn btn-outline" id="apagar-camp">Excluir</button><button class="btn" id="iniciar-camp">Iniciar e gerar chave</button>' : ""}<button class="btn btn-outline" data-close-modal>Fechar</button></div><h3>Inscrições</h3><div>${c.inscricoes.map((r) => `<p>${esc(r.nome)} ${u && (owned || r.captain_id === u.id) && c.status_code === "open" ? `<button class="link-btn" data-cancel="${r.id}">Cancelar inscrição</button>${r.captain_id === u.id ? `<button class="link-btn" data-swap="${r.id}">Trocar time</button>` : ""}` : ""}</p>`).join("") || "Nenhum time inscrito."}</div>${c.status_code === "open" ? (u ? `<form id="inscrever"><label for="inscrever-time">Seu time<select id="inscrever-time" name="team_id" required>${teams.map((t) => `<option value="${t.id}">${esc(t.nome)} (${t.membros.length} jogadores)</option>`).join("")}</select></label><button class="btn" ${teams.length ? "" : "disabled"}>Inscrever time</button></form><a href="times.html">Criar ou organizar um time</a>` : '<a href="login.html">Entre para participar</a>') : ""}<h3>Chaveamento</h3><a href="partidas.html?campeonato=${c.id}">Abrir chave e acompanhar transmissões →</a><p>${c.partidas.length ? "Chave gerada." : "A chave será gerada pelo organizador após o início."}</p>`,
+    `<h2>${esc(c.nome)}</h2><p>${esc(c.jogo)}${jogoDisponivel(c.jogo) ? "" : " · Em breve"} · ${esc(statusCampeonato(c))} · ${c.inscritos}/${c.limite} times</p><p>Início: ${esc(new Date(c.starts_at).toLocaleString("pt-BR"))} · ${c.team_size} jogador(es) por time</p><div class="acoes">${owned && c.status_code === "open" ? '<button class="btn" id="editar-camp">Editar</button><button class="btn btn-outline" id="apagar-camp">Excluir</button><button class="btn" id="iniciar-camp">Iniciar e gerar chave</button>' : ""}<button class="btn btn-outline" data-close-modal>Fechar</button></div><h3>Inscrições</h3><div>${c.inscricoes.map((r) => `<p>${esc(r.nome)} ${u && (owned || r.captain_id === u.id) && c.status_code === "open" ? `<button class="link-btn" data-cancel="${r.id}">Cancelar inscrição</button>${r.captain_id === u.id ? `<button class="link-btn" data-swap="${r.id}">Trocar time</button>` : ""}` : ""}</p>`).join("") || "Nenhum time inscrito."}</div>${c.status_code === "open" ? (u ? `<form id="inscrever"><label for="inscrever-time">Seu time<select id="inscrever-time" name="team_id" required>${teams.map((t) => `<option value="${t.id}">${esc(t.nome)} (${t.membros.length} jogadores)</option>`).join("")}</select></label><button class="btn" ${teams.length ? "" : "disabled"}>Inscrever time</button></form><a href="times.html">Criar ou organizar um time</a>` : '<a href="login.html">Entre para participar</a>') : ""}<h3>Chaveamento</h3><a href="partidas.html?campeonato=${c.id}">Abrir chave e acompanhar transmissões →</a><p>${c.partidas.length ? "Chave gerada." : "A chave será gerada pelo organizador após o início."}</p>`,
   );
   if (q("editar-camp")) q("editar-camp").onclick = () => campeonatoForm(c);
   if (q("apagar-camp"))
@@ -136,7 +143,12 @@ async function abrirInscricao(id) {
     jogos = await Api.listar("jogos");
     q("f-jogo").innerHTML =
       '<option value="">Todos os jogos</option>' +
-      jogos.map((j) => `<option>${esc(j.nome)}</option>`).join("");
+      jogos
+        .map(
+          (game) =>
+            `<option value="${esc(game.nome)}">${esc(game.nome)}${jogoDisponivel(game) ? "" : " — Em breve"}</option>`,
+        )
+        .join("");
     ["f-jogo", "f-status", "f-data", "f-part"].forEach((i) =>
       q(i).addEventListener("change", filtrar),
     );

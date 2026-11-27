@@ -15,7 +15,10 @@ async function carregarRanking() {
       Api.listar("jogos"),
     ]);
     q("r-jogo").innerHTML = games
-      .map((game) => `<option>${esc(game.nome)}</option>`)
+      .map(
+        (game) =>
+          `<option value="${esc(game.nome)}">${esc(game.nome)}${jogoDisponivel(game) ? "" : " — Em breve"}</option>`,
+      )
       .join("");
 
     if (!games.length) {
