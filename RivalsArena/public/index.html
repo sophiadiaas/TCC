@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Rivals Arena</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -19,7 +20,6 @@
 
     <main id="conteudo">
       <section class="hero" id="inicio">
-        <img class="hero-logo" src="assets/images/capivara.png" alt="" />
         <div class="container hero-grid">
           <div class="hero-text">
             <p class="tagline">Competição • Comunidade • Arena</p>
@@ -38,61 +38,7 @@
             </div>
           </div>
 
-          <aside
-            class="featured"
-            id="destaque"
-            aria-label="Campeonato em destaque"
-            aria-busy="true"
-          >
-            <p class="featured-status" aria-live="polite">
-              <span class="dot" id="destaque-dot" aria-hidden="true"></span
-              ><span id="destaque-status">Carregando campeonatos</span>
-            </p>
-            <img
-              class="featured-mascot"
-              id="destaque-mascote"
-              src="assets/images/capivara.png"
-              alt=""
-              aria-hidden="true"
-              hidden
-            />
-            <h2 id="destaque-nome" aria-live="polite">Carregando...</h2>
-            <p class="featured-count">
-              <strong id="destaque-inscritos"
-                ><span class="sr-only">Carregando participantes</span
-                ><span class="skeleton-number" aria-hidden="true"></span
-              ></strong>
-              /
-              <span id="destaque-limite"
-                ><span class="sr-only">Carregando vagas</span
-                ><span class="skeleton-number" aria-hidden="true"></span
-              ></span>
-              participantes
-            </p>
-            <div
-              class="bar"
-              role="progressbar"
-              aria-label="Vagas preenchidas"
-              aria-valuemin="0"
-              aria-valuemax="100"
-              aria-valuetext="Carregando inscrições"
-            >
-              <span id="destaque-barra" style="width: 0%"></span>
-            </div>
-            <p class="featured-left">
-              <span id="destaque-vagas"
-                ><span class="sr-only">Carregando vagas</span
-                ><span class="skeleton-number" aria-hidden="true"></span
-              ></span>
-              vagas restantes
-            </p>
-            <a
-              class="btn btn-primary btn-block"
-              id="destaque-detalhe"
-              href="campeonatos.html"
-              >Ver detalhes</a
-            >
-          </aside>
+          <img class="hero-mascot" src="assets/images/capivara.png" alt="" />
         </div>
       </section>
 

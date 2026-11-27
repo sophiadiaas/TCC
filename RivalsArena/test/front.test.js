@@ -107,12 +107,29 @@ test("front integrado: renderização, times, campeonatos, perfil, posts e comen
       .length,
     1,
   );
-  assert.equal(home.document.querySelectorAll("#lista-itens .row").length, 0);
-  assert.equal(
-    home.document.querySelector("#destaque-nome").textContent,
-    "Nenhum campeonato cadastrado",
+  assert.deepEqual(
+    [...home.document.querySelectorAll("#jogos-reais .game-banner img")].map(
+      (image) => image.getAttribute("src"),
+    ),
+    [
+      "assets/images/Capivarada.png",
+      "assets/images/Firego.png",
+      "assets/images/Rivalsduel.png",
+    ],
   );
-  assert.equal(home.document.querySelector("#destaque-mascote").hidden, false);
+  assert.equal(home.document.querySelectorAll("#lista-itens .row").length, 0);
+  assert.ok(home.document.querySelector(".hero-grid > .hero-mascot"));
+  assert.equal(
+    home.document.querySelector(".hero-mascot").getAttribute("src"),
+    "assets/images/capivara.png",
+  );
+  assert.equal(home.document.querySelector("#destaque"), null);
+  assert.ok(home.document.querySelector(".hero-text h1"));
+  assert.equal(
+    home.document.querySelectorAll(".hero-text .actions .btn").length,
+    2,
+  );
+  assert.ok(home.document.querySelector("#estatisticas"));
   const guestProfile = await page("perfil.html", new CookieJar());
   await wait(
     () =>
@@ -175,14 +192,8 @@ test("front integrado: renderização, times, campeonatos, perfil, posts e comen
       updatedHome.document.querySelector("#lista-itens .row")?.dataset.name ===
       "Copa do DOM",
   );
-  assert.equal(
-    updatedHome.document.querySelector("#destaque-nome").textContent,
-    "Copa do DOM",
-  );
-  assert.equal(
-    updatedHome.document.querySelector("#destaque-mascote").hidden,
-    true,
-  );
+  assert.ok(updatedHome.document.querySelector(".hero-grid > .hero-mascot"));
+  assert.equal(updatedHome.document.querySelector("#destaque"), null);
   const cup = await page("campeonatos.html?id=1");
   await wait(() => cup.document.querySelector("#inscrever"));
   cup.document
@@ -246,6 +257,8 @@ test("front integrado: renderização, times, campeonatos, perfil, posts e comen
     "ranking.html",
     "jogos.html",
     "jogos.html?id=1",
+    "jogos.html?id=2",
+    "jogos.html?id=3",
     "partidas.html?campeonato=1",
     "privacidade.html",
   ]) {
@@ -258,6 +271,28 @@ test("front integrado: renderização, times, campeonatos, perfil, posts e comen
         w.document.querySelectorAll("#lista-jogos .tag-status.status-unknown")
           .length,
         2,
+      );
+      assert.deepEqual(
+        [...w.document.querySelectorAll("#lista-jogos .game-cover-image")].map(
+          (image) => image.getAttribute("src"),
+        ),
+        [
+          "assets/images/Capivarada.png",
+          "assets/images/Firego.png",
+          "assets/images/Rivalsduel.png",
+        ],
+      );
+    }
+    if (path.startsWith("jogos.html?id=")) {
+      const cover = w.document.querySelector("#detalhe .game-detail-cover");
+      assert.ok(cover);
+      assert.equal(
+        cover.getAttribute("src"),
+        {
+          1: "assets/images/Capivarada.png",
+          2: "assets/images/Firego.png",
+          3: "assets/images/Rivalsduel.png",
+        }[new URLSearchParams(path.split("?")[1]).get("id")],
       );
     }
     if (path === "jogos.html?id=2") {

@@ -45,13 +45,14 @@
     }
     q("catalogo").hidden = true;
     q("detalhe").hidden = false;
+    const cover = imagemCapaJogo(j);
     const gameDetails = jogoDisponivel(j)
       ? `<div class="jogo-box"><div class="jogo-lado"><strong>Gênero</strong><span>${esc(j.genero)}</span><strong>Plataformas</strong><span>${esc(j.plataformas)}</span></div>
       <div class="jogo-info"><h2>Sobre o jogo</h2>${j.descricao.map((p) => `<p>${esc(p)}</p>`).join("")}<div><a class="btn btn-laranja" href="campeonatos.html">Ver campeonatos</a></div></div></div>`
       : '<div class="game-launch-status"><span class="tag tag-status status-unknown">Em breve</span><p>Este jogo ainda não está disponível na Rivals Arena.</p></div>';
     q("detalhe").innerHTML =
       `<div class="container secao"><div class="jogo-topo"><a href="jogos.html">← Voltar ao catálogo</a><span aria-hidden="true"> / </span>${esc(j.nome)}</div>
-      <div class="banner">${esc(j.titulo)}</div>
+      ${cover ? `<img class="game-detail-cover" src="${cover}" alt="Capa de ${esc(j.nome)}">` : `<div class="banner">${esc(j.titulo)}</div>`}
       ${gameDetails}</div>`;
 
     await renderActions(j);

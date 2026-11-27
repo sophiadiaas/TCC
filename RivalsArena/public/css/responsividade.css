@@ -20,7 +20,7 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .hero {
-    padding: 56px 0 70px;
+    padding: 2rem 0 2.25rem;
   }
   .hero h1 {
     font-size: 36px;
@@ -54,11 +54,6 @@
   }
   .podio div:nth-child(n) {
     padding: 20px;
-  }
-  .hero::before {
-    right: -4%;
-    width: min(63%, 370px);
-    opacity: 0.13;
   }
   .bracket {
     flex-direction: column;

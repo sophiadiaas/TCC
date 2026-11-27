@@ -199,6 +199,21 @@ function jogoDisponivel(game) {
   );
 }
 
+function imagemCapaJogo(game) {
+  const name = typeof game === "string" ? game : game?.nome || game?.name;
+  return (
+    {
+      capivarada: "assets/images/Capivarada.png",
+      "fire go": "assets/images/Firego.png",
+      "rivals duel": "assets/images/Rivalsduel.png",
+    }[
+      String(name || "")
+        .trim()
+        .toLocaleLowerCase("pt-BR")
+    ] || null
+  );
+}
+
 function abrirModal(html, success) {
   fecharModal();
   const backdrop = document.createElement("div");
@@ -238,6 +253,7 @@ function cardCampeonato(championship) {
 
 function cardJogo(game) {
   const available = jogoDisponivel(game);
+  const cover = imagemCapaJogo(game);
   const status = available
     ? `<span class="tag">${esc(game.genero || game.tag || "Jogo da Arena")}</span>`
     : '<span class="tag tag-status status-unknown game-status">Em breve</span>';
@@ -247,7 +263,10 @@ function cardJogo(game) {
   const action = available
     ? `<a class="btn btn-laranja" href="jogos.html?id=${game.id}">Conhecer o jogo</a>`
     : "";
-  return `<article class="card"><div class="card-img">${esc(game.titulo || game.nome)}</div><div class="card-corpo"><h3>${esc(game.nome)}</h3>${status}<p>${esc(description)}</p>${available ? `<p class="card-meta">${esc(game.plataformas || "")}</p>` : ""}${action}</div></article>`;
+  const artwork = cover
+    ? `<img class="game-cover-image" src="${cover}" alt="Capa de ${esc(game.nome)}" loading="lazy" decoding="async">`
+    : esc(game.titulo || game.nome);
+  return `<article class="card"><div class="card-img${cover ? " game-cover" : ""}">${artwork}</div><div class="card-corpo"><h3>${esc(game.nome)}</h3>${status}<p>${esc(description)}</p>${available ? `<p class="card-meta">${esc(game.plataformas || "")}</p>` : ""}${action}</div></article>`;
 }
 
 function montarLayout() {
@@ -419,7 +438,7 @@ document.querySelectorAll(".filter").forEach((button) =>
   }),
 );
 q("busca")?.addEventListener("input", filtrarLista);
-document.querySelectorAll(".hero-logo").forEach((image) => {
+document.querySelectorAll(".hero-mascot").forEach((image) => {
   image.addEventListener("error", () => {
     image.style.display = "none";
   });

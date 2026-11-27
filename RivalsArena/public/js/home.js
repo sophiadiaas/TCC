@@ -41,55 +41,6 @@ async function carregarInicio() {
       element.textContent = counts[element.dataset.countFor] ?? 0;
     });
 
-    const featured =
-      championships.find(
-        (championship) => championship.status_code === "open",
-      ) || championships[0];
-    q("destaque-mascote").hidden = Boolean(featured);
-    if (featured) {
-      const statusClass =
-        { open: "open", running: "live", finished: "done" }[
-          featured.status_code
-        ] || "";
-      q("destaque-dot").className =
-        `dot${statusClass ? " dot-" + statusClass : ""}`;
-      q("destaque-nome").textContent = featured.nome;
-      q("destaque-status").textContent = statusCampeonato(featured);
-      q("destaque-inscritos").textContent = featured.inscritos;
-      q("destaque-limite").textContent = featured.limite;
-      q("destaque-vagas").textContent = Math.max(
-        featured.limite - featured.inscritos,
-        0,
-      );
-      const percent = featured.limite
-        ? Math.min(100, (featured.inscritos / featured.limite) * 100)
-        : 0;
-      q("destaque-barra").style.width = `${percent}%`;
-      q("destaque-barra").parentElement.setAttribute(
-        "aria-valuenow",
-        String(Math.round(percent)),
-      );
-      q("destaque-barra").parentElement.removeAttribute("aria-valuetext");
-      q("destaque-detalhe").href = `campeonatos.html?id=${featured.id}`;
-      q("destaque-detalhe").textContent = "Ver detalhes e inscrição";
-    } else {
-      q("destaque-dot").className = "dot";
-      q("destaque-nome").textContent = "Nenhum campeonato cadastrado";
-      q("destaque-status").textContent =
-        "A arena está pronta para a próxima disputa";
-      q("destaque-inscritos").textContent = "—";
-      q("destaque-limite").textContent = "—";
-      q("destaque-vagas").textContent = "—";
-      q("destaque-barra").style.width = "0%";
-      q("destaque-barra").parentElement.setAttribute("aria-valuenow", "0");
-      q("destaque-barra").parentElement.setAttribute(
-        "aria-valuetext",
-        "Sem inscrições abertas",
-      );
-      q("destaque-detalhe").href = "campeonatos.html";
-      q("destaque-detalhe").textContent = "Explorar campeonatos";
-    }
-
     q("lista-itens").innerHTML = championships
       .map((championship) => {
         const percentage = championship.limite
@@ -107,13 +58,17 @@ async function carregarInicio() {
     q("jogos-reais").innerHTML = games
       .map((game) => {
         const available = jogoDisponivel(game);
+        const cover = imagemCapaJogo(game);
         const description = available
           ? game.resumo || game.description || "Descrição indisponível."
           : "Este jogo estará disponível em breve na Rivals Arena.";
         const action = available
           ? `<a class="btn btn-primary btn-sm" href="jogos.html?id=${game.id}">Conhecer o jogo</a>`
           : '<span class="tag tag-status status-unknown game-status">Em breve</span>';
-        return `<article class="game${available ? "" : " game-upcoming"}"><div class="game-banner"><span>${esc(game.nome)}</span></div><div class="game-info"><h3>${esc(game.nome)}</h3><p>${esc(description)}</p>${action}</div></article>`;
+        const artwork = cover
+          ? `<img src="${cover}" alt="Capa de ${esc(game.nome)}" loading="lazy" decoding="async">`
+          : `<span>${esc(game.nome)}</span>`;
+        return `<article class="game${available ? "" : " game-upcoming"}"><div class="game-banner">${artwork}</div><div class="game-info"><h3>${esc(game.nome)}</h3><p>${esc(description)}</p>${action}</div></article>`;
       })
       .join("");
     if (!games.length)
@@ -131,22 +86,6 @@ async function carregarInicio() {
     document.querySelectorAll("[data-count-for]").forEach((element) => {
       element.textContent = "—";
     });
-    q("destaque-dot").className = "dot";
-    q("destaque-mascote").hidden = true;
-    q("destaque-nome").textContent = "Dados temporariamente indisponíveis";
-    q("destaque-status").textContent =
-      "Não foi possível carregar as inscrições";
-    q("destaque-inscritos").textContent = "—";
-    q("destaque-limite").textContent = "—";
-    q("destaque-vagas").textContent = "—";
-    q("destaque-barra").style.width = "0%";
-    q("destaque-barra").parentElement.setAttribute("aria-valuenow", "0");
-    q("destaque-barra").parentElement.setAttribute(
-      "aria-valuetext",
-      "Inscrições indisponíveis",
-    );
-    q("destaque-detalhe").href = "campeonatos.html";
-    q("destaque-detalhe").textContent = "Ver campeonatos";
     q("vazio").hidden = true;
     renderState(
       q("lista-itens"),
@@ -167,7 +106,6 @@ async function carregarInicio() {
     stopLoadingGames();
     q("lista-itens").setAttribute("aria-busy", "false");
     q("jogos-reais").setAttribute("aria-busy", "false");
-    q("destaque").setAttribute("aria-busy", "false");
     q("estatisticas").setAttribute("aria-busy", "false");
   }
 }

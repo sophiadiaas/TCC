@@ -185,39 +185,32 @@ p {
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
 }
-.btn-block {
-  display: block;
-  width: 100%;
-}
-
 /* ===== Hero ===== */
 .hero {
-  position: relative;
-  overflow: hidden;
   background: var(--cor-superficie);
   border-bottom: 1px solid var(--cor-borda);
-  padding: 3.5rem 0;
+  padding: 10rem 0;
 }
-.hero-logo {
-  position: absolute;
-  right: 22%;
-  top: 50%;
-  width: 380px;
-  transform: translateY(-50%);
-  opacity: 0.14;
+.hero-mascot {
+  display: block;
+  width: min(100%, 700px);
+  height: auto;
+  max-width: 100%;
+  justify-self: center;
+  align-self: center;
+  object-fit: contain;
+  opacity: 0.1;
   pointer-events: none;
 }
-.hero-logo,
-.featured-mascot,
+.hero-mascot,
 .state-mascot {
   filter: url("#rivals-mascot-alpha");
 }
 .hero-grid {
-  position: relative;
   display: grid;
-  grid-template-columns: 1fr 340px;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
   align-items: center;
-  gap: 3rem;
+  gap: 2rem;
 }
 .tagline {
   margin-bottom: 1rem;
@@ -229,10 +222,10 @@ p {
 .hero h1 {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: clamp(2.8rem, 6vw, 4.4rem);
+  font-size: clamp(3rem, 8vw, 5.5rem);
   line-height: 0.95;
   text-transform: uppercase;
-  max-width: 10ch;
+  max-width: 100%;
   margin-bottom: 1.2rem;
 }
 .hero h1 .accent {
@@ -248,55 +241,6 @@ p {
   display: flex;
   flex-wrap: wrap;
   gap: 0.8rem;
-}
-
-/* Painel de inscrição (campeonato em destaque) */
-.featured {
-  background: var(--cor-preto);
-  border: 1px solid var(--cor-borda);
-  border-top: 3px solid var(--cor-laranja);
-  border-radius: 3px;
-  padding: 1.4rem;
-}
-.featured-mascot {
-  float: right;
-  width: 76px;
-  height: 72px;
-  margin: 0.15rem 0 0.35rem 0.7rem;
-  object-fit: contain;
-}
-.featured .bar {
-  clear: both;
-}
-.featured-status {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  margin-bottom: 0.6rem;
-}
-.featured h2 {
-  font-family: var(--font-display);
-  font-size: 2rem;
-  font-weight: 700;
-  line-height: 1;
-  margin-bottom: 1.2rem;
-}
-.featured-count {
-  font-size: 0.9rem;
-  color: var(--cor-cinza-claro);
-  margin-bottom: 0.5rem;
-}
-.featured-count strong {
-  font-family: var(--font-display);
-  font-size: 1.8rem;
-  color: var(--cor-branco);
-}
-.featured-left {
-  font-size: 0.875rem;
-  color: var(--cor-cinza-claro);
-  margin: 0.5rem 0 1.2rem;
 }
 
 /* Situação e barra de vagas */
@@ -326,10 +270,6 @@ p {
   height: 100%;
   background: var(--cor-laranja);
 }
-.featured .bar span {
-  background: var(--cor-laranja);
-}
-
 /* ===== Estatísticas ===== */
 .stats {
   background: var(--cor-preto);
@@ -529,12 +469,21 @@ p {
 .game-banner {
   display: grid;
   place-items: center;
-  min-height: 190px;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  padding: 0;
   background: var(--cor-laranja-escuro);
   font-family: var(--font-display);
   font-weight: 800;
   font-size: 2.6rem;
   text-transform: uppercase;
+}
+.game-banner img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 .game-upcoming .game-banner {
   color: var(--cor-cinza-claro);
@@ -570,6 +519,15 @@ p {
 .game-info p {
   color: var(--cor-cinza-claro);
   max-width: 44ch;
+}
+.game-detail-cover {
+  display: block;
+  width: min(100%, 760px);
+  height: auto;
+  aspect-ratio: 16 / 9;
+  margin: 0 auto 1.5rem;
+  object-fit: cover;
+  object-position: center;
 }
 
 /* ===== Componentes compartilhados das páginas internas ===== */
@@ -886,6 +844,20 @@ main {
   font-weight: 800;
   text-align: center;
   text-transform: uppercase;
+}
+.card-img.game-cover {
+  display: block;
+  min-height: 0;
+  aspect-ratio: 16 / 9;
+  padding: 0;
+  background: none;
+}
+.game-cover-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 .card-corpo {
   display: flex;
@@ -1521,8 +1493,7 @@ tbody tr:hover {
 /* ===== Tablet ===== */
 @media (max-width: 960px) {
   .hero-grid {
-    grid-template-columns: 1fr 300px;
-    gap: 2rem;
+    gap: 1.5rem;
   }
   .menu {
     gap: 1rem;
@@ -1620,11 +1591,10 @@ tbody tr:hover {
   }
   .hero-grid {
     grid-template-columns: 1fr;
-    gap: 2rem;
+    gap: 1.25rem;
   }
-  .hero-logo {
-    right: -80px;
-    width: 300px;
+  .hero-mascot {
+    width: min(78vw, 320px);
   }
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -1638,9 +1608,6 @@ tbody tr:hover {
   }
   .game {
     grid-template-columns: 1fr;
-  }
-  .game-banner {
-    min-height: 120px;
   }
   .footer-inner {
     grid-template-columns: 1fr;
@@ -1771,9 +1738,6 @@ tbody tr:hover {
 }
 .dot-done {
   background: var(--cor-cinza);
-}
-.featured .bar span {
-  background: var(--cor-laranja-claro);
 }
 .skeleton-text,
 .skeleton-number {
