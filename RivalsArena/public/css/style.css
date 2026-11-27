@@ -44,6 +44,10 @@ html {
   scroll-padding-top: 72px;
 }
 body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
   margin: 0;
   font-family: var(--font-body);
   color: var(--cor-branco);
@@ -558,7 +562,7 @@ p {
   display: none !important;
 }
 main {
-  min-height: 65vh;
+  flex: 1 0 auto;
 }
 .sr-only {
   position: absolute;
