@@ -1,7 +1,7 @@
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
 const http = require("node:http");
-const { openDatabase } = require("../src/db");
+const { openDatabase, connectionStringForPool } = require("../src/db");
 const { seed } = require("../src/seed");
 const { createApp } = require("../src/app");
 async function setup(t) {
@@ -71,6 +71,16 @@ function past(db, id) {
     id,
   );
 }
+test("parâmetros SSL da URI não sobrescrevem o CA configurado no pool", () => {
+  const uri = new URL(
+    connectionStringForPool(
+      "postgresql://user:password@db.example.test:5432/postgres?sslmode=require&sslrootcert=old-ca.pem&application_name=rivals",
+    ),
+  );
+  assert.equal(uri.searchParams.has("sslmode"), false);
+  assert.equal(uri.searchParams.has("sslrootcert"), false);
+  assert.equal(uri.searchParams.get("application_name"), "rivals");
+});
 test("autenticação, sessão persistente, validação e privacidade", async (t) => {
   const { client, base, db } = await setup(t);
   const c = client(),

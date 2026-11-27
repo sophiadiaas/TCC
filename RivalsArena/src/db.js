@@ -6,6 +6,13 @@ const { Pool, types } = require("pg");
 const transactions = new AsyncLocalStorage();
 types.setTypeParser(20, Number);
 
+function connectionStringForPool(connectionString) {
+  const url = new URL(connectionString);
+  for (const parameter of ["sslmode", "sslrootcert", "sslcert", "sslkey"])
+    url.searchParams.delete(parameter);
+  return url.toString();
+}
+
 function openTestDatabase(filename) {
   const Database = require("better-sqlite3");
   if (filename !== ":memory:")
@@ -48,19 +55,16 @@ function openDatabase(filename) {
   if (filename !== undefined) return openTestDatabase(filename);
 
   const connectionString =
-    process.env.DATABASE_URL ||
-    process.env.SUPABASE_DB_URL ||
-    process.env.SUPABASE_URL;
+    process.env.DATABASE_URL || process.env.SUPABASE_DB_URL;
   if (!connectionString || !/^postgres(?:ql)?:\/\//i.test(connectionString))
     throw new Error(
       "Configure DATABASE_URL com a string de conexão PostgreSQL do Supabase.",
     );
 
+  const ca = process.env.SUPABASE_CA_CERT?.replace(/\\n/g, "\n").trim();
   const pool = new Pool({
-    connectionString,
-    ssl: process.env.SUPABASE_CA_CERT
-      ? { ca: process.env.SUPABASE_CA_CERT, rejectUnauthorized: true }
-      : { rejectUnauthorized: true },
+    connectionString: connectionStringForPool(connectionString),
+    ssl: { ...(ca ? { ca } : {}), rejectUnauthorized: true },
     max: Number(process.env.DB_POOL_MAX) || 10,
   });
   return {
@@ -123,4 +127,4 @@ async function migrateDatabase(db) {
   }
 }
 
-module.exports = { openDatabase, migrateDatabase };
+module.exports = { openDatabase, migrateDatabase, connectionStringForPool };

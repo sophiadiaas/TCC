@@ -71,7 +71,8 @@ test("front integrado: renderização, times, campeonatos, perfil, posts e comen
     t.after(() => dom.window.close());
     await wait(
       () =>
-        dom.window.document.querySelector(".nav-links") || path === "api.html",
+        dom.window.document.querySelector(".nav-links, .menu") ||
+        path === "api.html",
     );
     return dom.window;
   }
@@ -79,11 +80,12 @@ test("front integrado: renderização, times, campeonatos, perfil, posts e comen
   await wait(
     () => home.document.querySelector("#stat-usuarios")?.textContent === "1",
   );
-  assert.equal(home.document.querySelectorAll("#lista-jogos .card").length, 3);
-  await wait(() =>
-    home.document
-      .querySelector("#mini-ranking")
-      .textContent.includes("primeiras partidas"),
+  await wait(() => home.document.querySelectorAll("#jogos-reais .game").length);
+  assert.equal(home.document.querySelectorAll("#jogos-reais .game").length, 3);
+  assert.equal(home.document.querySelectorAll("#lista-itens .row").length, 0);
+  assert.equal(
+    home.document.querySelector("#destaque-nome").textContent,
+    "Nenhum campeonato cadastrado",
   );
   const times = await page("times.html");
   await wait(() => times.document.querySelector("#novo-time"));
@@ -116,6 +118,16 @@ test("front integrado: renderização, times, campeonatos, perfil, posts e comen
     );
   await wait(() =>
     camps.document.querySelector("#lista").textContent.includes("Copa do DOM"),
+  );
+  const updatedHome = await page("index.html");
+  await wait(
+    () =>
+      updatedHome.document.querySelector("#lista-itens .row")?.dataset.name ===
+      "Copa do DOM",
+  );
+  assert.equal(
+    updatedHome.document.querySelector("#destaque-nome").textContent,
+    "Copa do DOM",
   );
   const cup = await page("campeonatos.html?id=1");
   await wait(() => cup.document.querySelector("#inscrever"));

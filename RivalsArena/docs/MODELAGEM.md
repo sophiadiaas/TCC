@@ -64,7 +64,12 @@ Capitão deve pertencer ao elenco, um jogador só participa uma vez por campeona
 
 O backend conecta ao PostgreSQL do Supabase usando `pg`. Configure a URI de conexão em `DATABASE_URL` (ou `SUPABASE_DB_URL`); o backend exige TLS com certificado válido. O SQLite é usado somente pelo adaptador de testes.
 
-O DDL PostgreSQL está em `db/migrations/001_initial.sql`. Execute `npm run db:migrate` para aplicar migrations pendentes; cada nome fica registrado em `schema_migrations` na mesma transação do DDL. O comando é idempotente.
+O DDL PostgreSQL está em `schema.sql` para execução pelo SQL Editor e em
+`db/migrations/` para implantação automatizada. Execute `npm run db:migrate`
+para aplicar migrations pendentes; cada nome fica registrado em
+`schema_migrations` na mesma transação do DDL. As alterações da migration 002
+são aditivas, preservam registros e adicionam `created_at`/`updated_at` aos
+registros mutáveis, com trigger para atualizar `updated_at`.
 
 Índices atendem busca de partidas por campeonato/rodada/posição, jogadores de inscrições, inscrições de time, membros de usuário, comentários de post e unicidade sem distinção de caixa para usuário/e-mail. PKs e restrições UNIQUE já criam índices para os acessos correspondentes.
 
@@ -81,3 +86,14 @@ ORDER BY t.id, tm.id, u.id;
 ```
 
 O seed cria o catálogo inicial no Supabase quando a tabela `games` está vazia. Dados demo só devem ser criados em um projeto Supabase isolado para desenvolvimento.
+
+## 4. Acesso e RLS
+
+RLS fica habilitado em todas as tabelas da aplicação. Os papéis Supabase
+`anon` e `authenticated` não recebem privilégios nem políticas de acesso; o
+acesso direto pelo PostgREST é negado. A aplicação usa uma API Node privada
+com uma conexão PostgreSQL de servidor. Essa API valida o cookie de sessão e
+autoriza cada operação segundo o proprietário, capitão ou organizador. A URI
+privilegiada permanece somente no ambiente do servidor; nenhum segredo de
+banco ou `service_role` é enviado ao navegador. Não há função administrativa
+global implementada no produto.

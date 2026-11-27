@@ -2,6 +2,9 @@
 
 Projeto acadêmico full stack desenvolvido a partir do front-end HTML/CSS/JavaScript fornecido e do briefing EP 190. Preserva logotipo, cores, navegação e estrutura das páginas, substituindo dados locais e operações simuladas por uma API Node.js/Express integrada ao PostgreSQL do Supabase.
 
+Veja [SUPABASE_SETUP.md](SUPABASE_SETUP.md) para criar o projeto, aplicar o
+esquema e configurar execução local e hospedagem.
+
 ## Compatibilidade com Node.js 20
 
 O backend usa o driver `pg` com consultas parametrizadas e transações no PostgreSQL do Supabase. O arquivo `.env` é carregado automaticamente e deve conter a string de conexão do banco. SQLite é usado somente pelos testes automatizados. As dependências e o executor dos testes são compatíveis com Node 20 e com o terminal do Windows.
@@ -12,7 +15,7 @@ Não é necessário instalar PostgreSQL localmente; o projeto precisa de acesso 
 
 ## Configurar e iniciar
 
-Instale **Node.js 20 ou superior** (inclui npm). No painel do Supabase, copie a string de conexão PostgreSQL em **Project Settings → Database → Connection string**. Copie `.env.example` para `.env` e substitua a URL de exemplo. A variável `DATABASE_URL` deve conter a URI PostgreSQL do banco, nunca a URL HTTP do projeto nem uma chave `anon`/`service_role`. O backend também aceita `SUPABASE_DB_URL` e, para compatibilidade, `SUPABASE_URL` quando contém uma URI `postgresql://`. Mantenha esse arquivo privado.
+Instale **Node.js 20 ou superior** (inclui npm). No painel do Supabase, copie a string de conexão PostgreSQL em **Project Settings → Database → Connection string**. Copie `.env.example` para `.env` e preencha `DATABASE_URL` com a URI PostgreSQL do banco, nunca a URL HTTP do projeto nem uma chave `anon`/`service_role`. `SUPABASE_DB_URL` também é aceito como nome alternativo. Mantenha esse arquivo privado.
 
 ```bash
 npm ci
