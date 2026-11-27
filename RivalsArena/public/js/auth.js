@@ -4,9 +4,11 @@ for (const kind of ["login", "cadastro"]) {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const f = e.target,
-      button = f.querySelector("button");
+      button = f.querySelector("button"),
+      feedback = q("auth-feedback");
     try {
       button.disabled = true;
+      if (feedback) feedback.textContent = "";
       if (
         kind === "cadastro" &&
         f.elements.namedItem("senha").value !==
@@ -28,6 +30,7 @@ for (const kind of ["login", "cadastro"]) {
       await Api.criar("auth/" + (kind === "login" ? "login" : "register"), b);
       location.href = "index.html";
     } catch (err) {
+      if (feedback) feedback.textContent = err.message;
       toast(err.message, "erro");
     } finally {
       button.disabled = false;

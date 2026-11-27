@@ -1,8 +1,14 @@
 let lista = [],
   jogos = [];
 async function carregar() {
-  lista = await Api.listar("campeonatos");
-  filtrar();
+  try {
+    lista = await Api.listar("campeonatos");
+    filtrar();
+  } catch (error) {
+    q("lista").innerHTML =
+      `<p class="state state-error" role="alert">${esc(error.message)}</p>`;
+    toast(error.message || "Não foi possível carregar campeonatos.", "erro");
+  }
 }
 function filtrar() {
   const j = q("f-jogo").value,
@@ -14,15 +20,11 @@ function filtrar() {
       (!j || c.jogo === j) &&
       (!s || c.status === s) &&
       (!d || c.inicio >= d) &&
-      (!p ||
-        (p === "32"
-          ? c.limite <= 32
-          : p === "64"
-            ? c.limite <= 64
-            : c.limite > 64)),
+      (!p || (p === "32" ? c.limite <= 32 : c.limite <= Number(p))),
   );
   q("lista").innerHTML =
-    r.map(cardCampeonato).join("") || "<p>Nenhum campeonato encontrado.</p>";
+    r.map(cardCampeonato).join("") ||
+    '<p class="state state-empty">Nenhum campeonato corresponde aos filtros.</p>';
 }
 function campeonatoForm(c) {
   const localDate = c
@@ -103,22 +105,31 @@ async function abrirInscricao(id) {
   });
 }
 (async () => {
-  await Sessao.ready;
-  jogos = await Api.listar("jogos");
-  q("f-jogo").innerHTML =
-    '<option value="">Todos os jogos</option>' +
-    jogos.map((j) => `<option>${esc(j.nome)}</option>`).join("");
-  ["f-jogo", "f-status", "f-data", "f-part"].forEach((i) =>
-    q(i).addEventListener("change", filtrar),
-  );
-  const bar = document.createElement("div");
-  bar.className = "acoes";
-  bar.innerHTML = Sessao.usuario()
-    ? '<button class="btn" id="criar-camp">Criar campeonato</button>'
-    : '<a href="login.html">Entre para organizar um campeonato</a>';
-  q("lista").before(bar);
-  if (q("criar-camp")) q("criar-camp").onclick = () => campeonatoForm();
-  await carregar();
-  const id = new URLSearchParams(location.search).get("id");
-  if (id) await abrirInscricao(id);
+  try {
+    await Sessao.ready;
+    jogos = await Api.listar("jogos");
+    q("f-jogo").innerHTML =
+      '<option value="">Todos os jogos</option>' +
+      jogos.map((j) => `<option>${esc(j.nome)}</option>`).join("");
+    ["f-jogo", "f-status", "f-data", "f-part"].forEach((i) =>
+      q(i).addEventListener("change", filtrar),
+    );
+    const bar = document.createElement("div");
+    bar.className = "acoes page-actions";
+    bar.innerHTML = Sessao.usuario()
+      ? '<button class="btn" id="criar-camp">Criar campeonato</button>'
+      : '<a class="btn btn-outline" href="login.html">Entre para organizar um campeonato</a>';
+    q("lista").parentElement.insertBefore(
+      bar,
+      q("lista").parentElement.querySelector(".filtros"),
+    );
+    if (q("criar-camp")) q("criar-camp").onclick = () => campeonatoForm();
+    await carregar();
+    const id = new URLSearchParams(location.search).get("id");
+    if (id) await abrirInscricao(id);
+  } catch (error) {
+    q("lista").innerHTML =
+      `<p class="state state-error" role="alert">${esc(error.message)}</p>`;
+    toast(error.message || "Não foi possível abrir campeonatos.", "erro");
+  }
 })();

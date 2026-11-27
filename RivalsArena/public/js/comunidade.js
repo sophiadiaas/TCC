@@ -1,39 +1,53 @@
 let posts = [];
 async function renderPosts() {
-  posts = await Api.listar("posts");
-  const u = Sessao.usuario();
-  q("posts").innerHTML =
-    posts
-      .map(
-        (p) =>
-          `<article class="post"><div class="post-topo"><span class="avatar">${esc(iniciais(p.autor))}</span><b class="laranja">${esc(p.autor)}</b><small>${esc(p.data)}</small></div><p>${esc(p.texto)}</p><div class="post-acoes"><button class="link-btn ${p.curtido ? "curtido" : ""}" data-like="${p.id}">♥ ${p.curtidas}</button><button class="link-btn" data-comments="${p.id}">Comentários (${p.comentarios})</button>${u?.id === p.user_id ? `<button class="link-btn" data-edit="${p.id}">Editar</button><button class="link-btn" data-delete="${p.id}">Excluir</button>` : ""}</div><div id="comments-${p.id}"></div></article>`,
-      )
-      .join("") ||
-    "<p>A comunidade está começando. Faça a primeira publicação!</p>";
+  try {
+    posts = await Api.listar("posts");
+    const u = Sessao.usuario();
+    q("posts").innerHTML =
+      posts
+        .map(
+          (p) =>
+            `<article class="post"><div class="post-topo"><span class="avatar">${esc(iniciais(p.autor))}</span><b class="laranja">${esc(p.autor)}</b><small>${esc(new Date(p.data).toLocaleString("pt-BR"))}</small></div><p>${esc(p.texto)}</p><div class="post-acoes"><button class="link-btn ${p.curtido ? "curtido" : ""}" data-like="${p.id}" aria-label="${p.curtido ? "Descurtir" : "Curtir"} publicação de ${esc(p.autor)}">♥ ${p.curtidas}</button><button class="link-btn" data-comments="${p.id}">Comentários (${p.comentarios})</button>${u?.id === p.user_id ? `<button class="link-btn" data-edit="${p.id}">Editar</button><button class="link-btn" data-delete="${p.id}">Excluir</button>` : ""}</div><div id="comments-${p.id}"></div></article>`,
+        )
+        .join("") ||
+      '<p class="state state-empty">A comunidade está começando. Faça a primeira publicação!</p>';
+  } catch (error) {
+    q("posts").innerHTML =
+      `<p class="state state-error" role="alert">${esc(error.message)}</p>`;
+    toast(error.message || "Não foi possível carregar as publicações.", "erro");
+  }
 }
 async function comments(id) {
-  const data = await Api.request(`posts/${id}/comentarios`),
-    u = Sessao.usuario();
-  q("comments-" + id).innerHTML =
-    data
-      .map(
-        (c) =>
-          `<div class="match"><b>${esc(c.autor)}</b><p>${esc(c.text)}</p>${c.user_id === u?.id ? `<button class="link-btn" data-comment-edit="${c.id}" data-post="${id}">Editar comentário</button><button class="link-btn" data-comment-delete="${c.id}" data-post="${id}">Excluir comentário</button>` : ""}</div>`,
-      )
-      .join("") +
-    (u
-      ? `<form data-comment-form="${id}"><label>Seu comentário<input name="texto" required maxlength="1000"></label><button class="btn">Comentar</button></form>`
-      : "<p>Entre para comentar.</p>");
-  q("comments-" + id)
-    .querySelector("form")
-    ?.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      await Api.criar(`posts/${id}/comentarios`, {
-        texto: e.target.elements.namedItem("texto").value,
-      });
-      await renderPosts();
-      await comments(id);
+  const target = q("comments-" + id);
+  target.innerHTML =
+    '<p class="state state-loading">Carregando comentários...</p>';
+  try {
+    const data = await Api.request(`posts/${id}/comentarios`),
+      u = Sessao.usuario();
+    target.innerHTML =
+      (data
+        .map(
+          (c) =>
+            `<div class="match"><b>${esc(c.autor)}</b><p>${esc(c.text)}</p>${c.user_id === u?.id ? `<button class="link-btn" data-comment-edit="${c.id}" data-post="${id}">Editar comentário</button><button class="link-btn" data-comment-delete="${c.id}" data-post="${id}">Excluir comentário</button>` : ""}</div>`,
+        )
+        .join("") ||
+        '<p class="state state-empty">Ainda não há comentários.</p>') +
+      (u
+        ? `<form data-comment-form="${id}"><label>Seu comentário<input name="texto" required maxlength="1000"></label><button class="btn">Comentar</button></form>`
+        : "<p>Entre para comentar.</p>");
+  } catch (error) {
+    target.innerHTML = `<p class="state state-error" role="alert">${esc(error.message)}</p>`;
+    toast(error.message || "Não foi possível carregar os comentários.", "erro");
+    return;
+  }
+  target.querySelector("form")?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    await Api.criar(`posts/${id}/comentarios`, {
+      texto: e.target.elements.namedItem("texto").value,
     });
+    await renderPosts();
+    await comments(id);
+  });
 }
 q("posts").onclick = async (e) => {
   const b = e.target.closest("button");

@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Ranking | Rivals Arena</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@400;600;700&family=Pixelify+Sans:wght@500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/responsividade.css" />
   </head>
   <body data-pagina="ranking">
-    <header id="navbar"></header>
+    <header id="navbar" class="navbar" aria-busy="true"></header>
     <main>
       <div class="page-hero">
         <div class="container">
@@ -23,12 +23,11 @@
       </div>
       <section class="container secao">
         <div class="filtros grid grid-4">
-          <label>Jogos<select id="r-jogo"></select></label
-          ><label
-            >Temporada<select id="r-temporada">
-              <option>Histórico completo</option>
-            </select></label
-          ><label
+          <label>Jogos<select id="r-jogo"></select></label>
+          <div class="filter-note">
+            <span>Temporada</span><strong>Histórico completo</strong>
+          </div>
+          <label
             >Região<select id="r-regiao">
               <option value="">Todas</option>
               <option>Brasil</option>
@@ -38,7 +37,9 @@
             >Buscar jogador<input id="r-busca" placeholder="Nome do jogador"
           /></label>
         </div>
-        <div class="podio" id="podio"></div>
+        <div class="podio" id="podio" aria-live="polite">
+          <p class="state state-loading">Carregando ranking...</p>
+        </div>
         <div class="tabela-wrap">
           <table>
             <thead>

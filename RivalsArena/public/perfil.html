@@ -5,16 +5,20 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Perfil | Rivals Arena</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@400;600;700&family=Pixelify+Sans:wght@500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/responsividade.css" />
   </head>
   <body data-pagina="perfil">
-    <header id="navbar"></header>
+    <header id="navbar" class="navbar" aria-busy="true"></header>
     <main>
-      <div class="perfil-topo" id="perfil-topo"></div>
+      <div class="perfil-topo" id="perfil-topo">
+        <div class="container">
+          <p class="state state-loading">Carregando perfil...</p>
+        </div>
+      </div>
       <section class="container secao">
         <div class="kpis" id="kpis"></div>
         <h2>Histórico de partidas</h2>

@@ -3,11 +3,33 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>API Rivals Arena</title>
+    <title>Documentação da API | Rivals Arena</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/responsividade.css" />
     <link rel="stylesheet" href="/docs/assets/swagger-ui.css" />
   </head>
-  <body>
-    <div id="swagger-ui"></div>
+  <body data-pagina="api">
+    <header id="navbar" class="navbar" aria-busy="true"></header>
+    <main>
+      <div class="page-hero">
+        <div class="container">
+          <small>Desenvolvedores</small>
+          <h1>Documentação da API</h1>
+          <p>Referência dos endpoints da plataforma Rivals Arena.</p>
+        </div>
+      </div>
+      <section class="api-page">
+        <div id="swagger-ui" aria-label="Documentação interativa"></div>
+      </section>
+    </main>
+    <footer id="footer"></footer>
+    <script src="/js/main.js"></script>
     <script src="/docs/assets/swagger-ui-bundle.js"></script>
     <script src="/js/swagger.js"></script>
   </body>

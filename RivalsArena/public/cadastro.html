@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Cadastro | Rivals Arena</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@400;600;700&family=Pixelify+Sans:wght@500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/style.css" />
@@ -17,13 +17,45 @@
         <div class="auth-card">
           <img src="assets/images/logo.png" alt="Rivals Arena" />
           <h1>CADASTRE-SE</h1>
-          <form id="form-cadastro" novalidate>
-            <label>Nome de usuário<input name="usuario" /></label
-            ><label>E-mail<input type="email" name="email" /></label
-            ><label>Criar Senha<input type="password" name="senha" /></label
+          <form id="form-cadastro">
+            <label
+              >Nome de usuário<input
+                name="usuario"
+                autocomplete="username"
+                minlength="3"
+                maxlength="20"
+                pattern="[A-Za-z0-9_]+"
+                required /></label
             ><label
-              >Confirmar Senha<input type="password" name="confirmar" /></label
+              >E-mail<input
+                type="email"
+                name="email"
+                autocomplete="email"
+                maxlength="254"
+                required /></label
+            ><label
+              >Criar Senha<input
+                type="password"
+                name="senha"
+                autocomplete="new-password"
+                minlength="8"
+                maxlength="128"
+                required /></label
+            ><label
+              >Confirmar Senha<input
+                type="password"
+                name="confirmar"
+                autocomplete="new-password"
+                minlength="8"
+                maxlength="128"
+                required /></label
             ><button class="btn btn-bloco">CRIAR CONTA</button>
+            <p
+              class="auth-feedback"
+              id="auth-feedback"
+              role="alert"
+              aria-live="polite"
+            ></p>
             <div class="links">
               <span></span><a href="login.html">Já tenho conta</a>
             </div>

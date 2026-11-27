@@ -3,29 +3,36 @@ let times = [],
 const options = () =>
   jogos.map((j) => `<option value="${j.id}">${esc(j.nome)}</option>`).join("");
 async function carregarTimes() {
-  times = await Api.listar("times");
-  const u = Sessao.usuario();
-  q("times").innerHTML =
-    times
-      .map(
-        (t) =>
-          `<article class="card"><div class="card-img">${esc(t.nome)}</div><div class="card-corpo"><h3>${esc(t.jogo)}</h3><p>${esc(t.description)}</p><p>Elenco: ${t.membros.map((m) => esc(m.usuario)).join(", ")}</p><p>${t.locked ? "Elenco bloqueado por inscrição" : "Elenco aberto (até 8 membros)"}</p>${
-            u
-              ? `<div class="acoes">${t.captain_id === u.id ? `<button class="btn" data-edit="${t.id}">Editar</button><button class="btn" data-delete="${t.id}">Excluir</button>` : t.membros.some((m) => m.id === u.id) ? `<button class="btn" data-leave="${t.id}">Sair do time</button>` : `<button class="btn" data-join="${t.id}">Entrar no time</button>`}</div>${
-                  t.captain_id === u.id
-                    ? t.membros
-                        .filter((m) => m.id !== u.id)
-                        .map(
-                          (m) =>
-                            `<button class="link-btn" data-kick="${t.id}" data-user="${m.id}">Remover ${esc(m.usuario)}</button>`,
-                        )
-                        .join("")
-                    : ""
-                }`
-              : ""
-          }</div></article>`,
-      )
-      .join("") || "<p>Nenhum time cadastrado. Crie o primeiro!</p>";
+  try {
+    times = await Api.listar("times");
+    const u = Sessao.usuario();
+    q("times").innerHTML =
+      times
+        .map(
+          (t) =>
+            `<article class="card"><div class="card-img">${esc(t.nome)}</div><div class="card-corpo"><div class="card-heading"><h3>${esc(t.nome)}</h3><span class="tag">${esc(t.jogo)}</span></div><p>${esc(t.description || "Sem descrição.")}</p><p><strong>Elenco:</strong> ${t.membros.map((m) => esc(m.usuario)).join(", ") || "Nenhum integrante"}</p><p>${t.locked ? "Elenco bloqueado por inscrição" : "Elenco aberto (até 8 membros)"}</p>${
+              u
+                ? `<div class="acoes">${t.captain_id === u.id ? `<button class="btn" data-edit="${t.id}">Editar time</button><button class="btn btn-outline" data-delete="${t.id}">Excluir time</button>` : t.membros.some((m) => m.id === u.id) ? `<button class="btn btn-outline" data-leave="${t.id}">Sair do time</button>` : `<button class="btn" data-join="${t.id}">Entrar no time</button>`}</div>${
+                    t.captain_id === u.id
+                      ? t.membros
+                          .filter((m) => m.id !== u.id)
+                          .map(
+                            (m) =>
+                              `<button class="link-btn" data-kick="${t.id}" data-user="${m.id}">Remover ${esc(m.usuario)}</button>`,
+                          )
+                          .join("")
+                      : ""
+                  }`
+                : ""
+            }</div></article>`,
+        )
+        .join("") ||
+      '<p class="state state-empty">Ainda não há times. Entre na Arena e crie o primeiro.</p>';
+  } catch (error) {
+    q("times").innerHTML =
+      `<p class="state state-error" role="alert">${esc(error.message)}</p>`;
+    toast(error.message || "Não foi possível carregar os times.", "erro");
+  }
 }
 function timeForm(t) {
   abrirModal(
@@ -57,11 +64,17 @@ q("times").onclick = async (e) => {
   await carregarTimes();
 };
 (async () => {
-  await Sessao.ready;
-  jogos = await Api.listar("jogos");
-  q("time-acoes").innerHTML = Sessao.usuario()
-    ? '<button class="btn" id="novo-time">Criar time</button><p class="ajuda">Para jogar solo, crie um time só com você. Para equipes, peça aos colegas para entrar no seu time.</p>'
-    : '<p><a href="login.html">Faça login</a> para criar ou entrar em um time.</p>';
-  if (q("novo-time")) q("novo-time").onclick = () => timeForm();
-  await carregarTimes();
+  try {
+    await Sessao.ready;
+    jogos = await Api.listar("jogos");
+    q("time-acoes").innerHTML = Sessao.usuario()
+      ? '<button class="btn" id="novo-time">Criar time</button><p class="ajuda">Capitães organizam o elenco; integrantes podem entrar ou sair antes da inscrição em campeonatos.</p>'
+      : '<p class="state">Faça <a href="login.html">login</a> para criar ou entrar em um time.</p>';
+    if (q("novo-time")) q("novo-time").onclick = () => timeForm();
+    await carregarTimes();
+  } catch (error) {
+    q("times").innerHTML =
+      `<p class="state state-error" role="alert">${esc(error.message)}</p>`;
+    toast(error.message || "Não foi possível abrir os times.", "erro");
+  }
 })();

@@ -5,7 +5,9 @@ async function render() {
   q("titulo-chave").textContent = campeonato.nome;
   const matches = campeonato.partidas,
     u = Sessao.usuario();
-  const rounds = [...new Set(matches.map((m) => m.round))];
+  const rounds = [...new Set(matches.map((m) => m.round))].sort(
+    (a, b) => a - b,
+  );
   q("chave").innerHTML = rounds.length
     ? rounds
         .map(
@@ -19,7 +21,7 @@ async function render() {
               .join("")}</section>`,
         )
         .join("")
-    : "<p>A chave ainda não foi gerada. Volte aos detalhes do campeonato.</p>";
+    : '<p class="state state-empty">A chave ainda não foi gerada. Volte aos <a href="campeonatos.html">detalhes do campeonato</a>.</p>';
   q("voltar-camp").href = "campeonatos.html?id=" + tid;
   let reset = q("reset-chave");
   if (reset) reset.remove();
@@ -86,8 +88,14 @@ q("chave").onclick = (e) => {
   await Sessao.ready;
   if (!tid) {
     q("chave").innerHTML =
-      "<p>Selecione um campeonato na página de campeonatos.</p>";
+      '<p class="state state-empty">Para ver partidas e resultados, escolha um <a href="campeonatos.html">campeonato</a>.</p>';
     return;
   }
-  await render();
+  try {
+    await render();
+  } catch (error) {
+    q("chave").innerHTML =
+      `<p class="state state-error" role="alert">${esc(error.message)}</p>`;
+    toast(error.message || "Não foi possível carregar o chaveamento.", "erro");
+  }
 })();

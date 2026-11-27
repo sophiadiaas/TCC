@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Campeonatos | Rivals Arena</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@400;600;700&family=Pixelify+Sans:wght@500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/responsividade.css" />
   </head>
   <body data-pagina="campeonatos">
-    <header id="navbar"></header>
+    <header id="navbar" class="navbar" aria-busy="true"></header>
     <main>
       <div class="page-hero">
         <div class="container">
@@ -22,6 +22,7 @@
         </div>
       </div>
       <section class="container secao">
+        <h2 class="sr-only">Filtros e campeonatos disponíveis</h2>
         <div class="filtros grid grid-4">
           <label>Jogos<select id="f-jogo"></select></label
           ><label
@@ -33,15 +34,17 @@
             </select></label
           ><label>Data (a partir de)<input type="date" id="f-data" /></label
           ><label
-            >Participantes<select id="f-part">
+            >Tamanho do campeonato<select id="f-part">
               <option value="">Qualquer quantidade</option>
-              <option value="32">Até 32</option>
+              <option value="16">Até 16 times</option>
+              <option value="32">Até 32 times</option>
               <option value="64">Até 64</option>
-              <option value="99">Mais de 64</option>
             </select></label
           >
         </div>
-        <div class="grid" id="lista"></div>
+        <div class="grid" id="lista" aria-live="polite">
+          <p class="state state-loading">Carregando campeonatos...</p>
+        </div>
       </section>
     </main>
     <footer id="footer"></footer>

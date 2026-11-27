@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Comunidade | Rivals Arena</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@400;600;700&family=Pixelify+Sans:wght@500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/responsividade.css" />
   </head>
   <body data-pagina="comunidade">
-    <header id="navbar"></header>
+    <header id="navbar" class="navbar" aria-busy="true"></header>
     <main>
       <div class="page-hero">
         <div class="container">
@@ -22,10 +22,18 @@
         </div>
       </div>
       <section class="container secao">
-        <div style="text-align: right; margin-bottom: 20px">
+        <div class="section-head actions-row">
+          <div>
+            <h2>Publicações</h2>
+            <p class="section-sub">
+              Compartilhe dicas, partidas e novidades com a comunidade.
+            </p>
+          </div>
           <button class="btn" id="btn-publicar">Criar publicação</button>
         </div>
-        <div id="posts"></div>
+        <div id="posts" aria-live="polite">
+          <p class="state state-loading">Carregando publicações...</p>
+        </div>
         <div class="caixa" id="nova" hidden>
           <h2 class="laranja" style="font-weight: 400">Criar publicação</h2>
           <form id="form-post">
@@ -33,6 +41,8 @@
               >Texto<textarea
                 id="texto"
                 rows="3"
+                maxlength="1000"
+                required
                 placeholder="O que você quer compartilhar?"
               ></textarea></label
             ><button class="btn btn-laranja">Publicar</button>
