@@ -12,44 +12,53 @@
     <link rel="stylesheet" href="css/responsividade.css" />
   </head>
   <body data-pagina="cadastro">
-    <main>
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+    <main id="conteudo">
       <div class="auth">
         <div class="auth-card">
           <img src="assets/images/logo.png" alt="Rivals Arena" />
           <h1>CADASTRE-SE</h1>
           <form id="form-cadastro">
-            <label
+            <label for="usuario"
               >Nome de usuário<input
+                id="usuario"
                 name="usuario"
                 autocomplete="username"
                 minlength="3"
                 maxlength="20"
                 pattern="[A-Za-z0-9_]+"
-                required /></label
-            ><label
+                required
+            /></label>
+            <label for="email"
               >E-mail<input
+                id="email"
                 type="email"
                 name="email"
                 autocomplete="email"
                 maxlength="254"
-                required /></label
-            ><label
+                required
+            /></label>
+            <label for="senha"
               >Criar Senha<input
+                id="senha"
                 type="password"
                 name="senha"
                 autocomplete="new-password"
                 minlength="8"
                 maxlength="128"
-                required /></label
-            ><label
+                required
+            /></label>
+            <label for="confirmar"
               >Confirmar Senha<input
+                id="confirmar"
                 type="password"
                 name="confirmar"
                 autocomplete="new-password"
                 minlength="8"
                 maxlength="128"
-                required /></label
-            ><button class="btn btn-bloco">CRIAR CONTA</button>
+                required
+            /></label>
+            <button class="btn btn-bloco" type="submit">Criar conta</button>
             <p
               class="auth-feedback"
               id="auth-feedback"

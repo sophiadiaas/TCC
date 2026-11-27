@@ -1,106 +1,213 @@
 let posts = [];
+
 async function renderPosts() {
+  const stopLoading = startLoading(q("posts"), "Carregando publicações...");
+  q("posts").setAttribute("aria-busy", "true");
   try {
     posts = await Api.listar("posts");
-    const u = Sessao.usuario();
-    q("posts").innerHTML =
-      posts
-        .map(
-          (p) =>
-            `<article class="post"><div class="post-topo"><span class="avatar">${esc(iniciais(p.autor))}</span><b class="laranja">${esc(p.autor)}</b><small>${esc(new Date(p.data).toLocaleString("pt-BR"))}</small></div><p>${esc(p.texto)}</p><div class="post-acoes"><button class="link-btn ${p.curtido ? "curtido" : ""}" data-like="${p.id}" aria-label="${p.curtido ? "Descurtir" : "Curtir"} publicação de ${esc(p.autor)}">♥ ${p.curtidas}</button><button class="link-btn" data-comments="${p.id}">Comentários (${p.comentarios})</button>${u?.id === p.user_id ? `<button class="link-btn" data-edit="${p.id}">Editar</button><button class="link-btn" data-delete="${p.id}">Excluir</button>` : ""}</div><div id="comments-${p.id}"></div></article>`,
-        )
-        .join("") ||
-      '<p class="state state-empty">A comunidade está começando. Faça a primeira publicação!</p>';
+    const user = Sessao.usuario();
+    q("posts").innerHTML = posts
+      .map(
+        (post) =>
+          `<article class="post"><div class="post-topo"><span class="avatar" aria-hidden="true">${esc(iniciais(post.autor))}</span><b class="laranja">${esc(post.autor)}</b><small>${esc(new Date(post.data).toLocaleString("pt-BR"))}</small></div><p>${esc(post.texto)}</p><div class="post-acoes"><button class="link-btn ${post.curtido ? "curtido" : ""}" data-like="${post.id}" aria-pressed="${Boolean(post.curtido)}" aria-label="${post.curtido ? "Descurtir" : "Curtir"} publicação de ${esc(post.autor)}">Curtir · ${post.curtidas}</button><button class="link-btn" data-comments="${post.id}" aria-expanded="false" aria-controls="comments-${post.id}">Comentários (${post.comentarios})</button>${user?.id === post.user_id ? `<button class="link-btn" data-edit="${post.id}">Editar</button><button class="link-btn post-delete" data-delete="${post.id}">Excluir</button>` : ""}</div><div id="comments-${post.id}"></div></article>`,
+      )
+      .join("");
+    if (!posts.length)
+      renderState(
+        q("posts"),
+        "empty",
+        "Ainda não há publicações. Seja a primeira pessoa a compartilhar algo.",
+      );
   } catch (error) {
-    q("posts").innerHTML =
-      `<p class="state state-error" role="alert">${esc(error.message)}</p>`;
-    toast(error.message || "Não foi possível carregar as publicações.", "erro");
+    renderState(
+      q("posts"),
+      "error",
+      error.message || "Não foi possível carregar as publicações.",
+      "Tentar novamente",
+      renderPosts,
+    );
+  } finally {
+    stopLoading();
+    q("posts").setAttribute("aria-busy", "false");
   }
 }
+
 async function comments(id) {
   const target = q("comments-" + id);
-  target.innerHTML =
-    '<p class="state state-loading">Carregando comentários...</p>';
+  const stopLoading = startLoading(target, "Carregando comentários...");
   try {
-    const data = await Api.request(`posts/${id}/comentarios`),
-      u = Sessao.usuario();
-    target.innerHTML =
-      (data
-        .map(
-          (c) =>
-            `<div class="match"><b>${esc(c.autor)}</b><p>${esc(c.text)}</p>${c.user_id === u?.id ? `<button class="link-btn" data-comment-edit="${c.id}" data-post="${id}">Editar comentário</button><button class="link-btn" data-comment-delete="${c.id}" data-post="${id}">Excluir comentário</button>` : ""}</div>`,
-        )
-        .join("") ||
-        '<p class="state state-empty">Ainda não há comentários.</p>') +
-      (u
-        ? `<form data-comment-form="${id}"><label>Seu comentário<input name="texto" required maxlength="1000"></label><button class="btn">Comentar</button></form>`
-        : "<p>Entre para comentar.</p>");
+    const data = await Api.request(`posts/${id}/comentarios`);
+    const user = Sessao.usuario();
+    q("posts")
+      .querySelector(`[data-comments="${id}"]`)
+      ?.setAttribute("aria-expanded", "true");
+    target.replaceChildren();
+    if (data.length) {
+      target.insertAdjacentHTML(
+        "beforeend",
+        data
+          .map(
+            (comment) =>
+              `<div class="match"><b>${esc(comment.autor)}</b><p>${esc(comment.text)}</p>${comment.user_id === user?.id ? `<button class="link-btn" data-comment-edit="${comment.id}" data-post="${id}">Editar comentário</button><button class="link-btn post-delete" data-comment-delete="${comment.id}" data-post="${id}">Excluir comentário</button>` : ""}</div>`,
+          )
+          .join(""),
+      );
+    } else {
+      renderState(target, "empty", "Ainda não há comentários.");
+    }
+
+    if (user) {
+      target.insertAdjacentHTML(
+        "beforeend",
+        `<form data-comment-form="${id}"><label for="comment-text-${id}">Seu comentário<input id="comment-text-${id}" name="texto" required maxlength="1000"></label><button class="btn" type="submit">Comentar</button></form>`,
+      );
+    } else {
+      target.insertAdjacentHTML(
+        "beforeend",
+        '<p class="comment-signin">Entre para comentar.</p>',
+      );
+    }
   } catch (error) {
-    target.innerHTML = `<p class="state state-error" role="alert">${esc(error.message)}</p>`;
-    toast(error.message || "Não foi possível carregar os comentários.", "erro");
+    renderState(
+      target,
+      "error",
+      error.message || "Não foi possível carregar os comentários.",
+      "Tentar novamente",
+      () => comments(id),
+    );
     return;
+  } finally {
+    stopLoading();
   }
-  target.querySelector("form")?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    await Api.criar(`posts/${id}/comentarios`, {
-      texto: e.target.elements.namedItem("texto").value,
-    });
-    await renderPosts();
-    await comments(id);
+
+  target.querySelector("form")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const input = event.target.elements.namedItem("texto");
+    try {
+      await Api.criar(`posts/${id}/comentarios`, { texto: input.value });
+      await renderPosts();
+      await comments(id);
+    } catch (error) {
+      renderState(
+        target,
+        "error",
+        error.message || "Não foi possível enviar o comentário.",
+        "Tentar novamente",
+        () => comments(id),
+      );
+    }
   });
 }
-q("posts").onclick = async (e) => {
-  const b = e.target.closest("button");
-  if (!b) return;
-  if (b.dataset.like) {
-    const p = posts.find((x) => x.id == b.dataset.like);
+
+function atualizarContador() {
+  const input = q("texto");
+  const length = input.value.length;
+  q("contador-texto").textContent = `${length} / 1000`;
+  q("submit-post").disabled = !input.value.trim();
+}
+
+q("posts").addEventListener("click", async (event) => {
+  const button = event.target.closest("button");
+  if (!button) return;
+
+  if (button.dataset.like) {
+    if (!Sessao.usuario())
+      return toast("Entre para curtir publicações.", "erro");
+    const post = posts.find((item) => item.id == button.dataset.like);
     await Api.request(
-      `posts/${p.id}/curtidas`,
-      p.curtido ? "DELETE" : "POST",
-      p.curtido ? undefined : {},
+      `posts/${post.id}/curtidas`,
+      post.curtido ? "DELETE" : "POST",
+      post.curtido ? undefined : {},
     );
     await renderPosts();
   }
-  if (b.dataset.comments) await comments(b.dataset.comments);
-  if (b.dataset.delete && confirmarExclusao()) {
-    await Api.remover("posts", b.dataset.delete);
+  if (button.dataset.comments) {
+    const target = q("comments-" + button.dataset.comments);
+    if (button.getAttribute("aria-expanded") === "true") {
+      button.setAttribute("aria-expanded", "false");
+      target.replaceChildren();
+    } else {
+      button.setAttribute("aria-expanded", "true");
+      await comments(button.dataset.comments);
+    }
+  }
+  if (button.dataset.delete && confirmarExclusao()) {
+    await Api.remover("posts", button.dataset.delete);
     await renderPosts();
   }
-  if (b.dataset.edit) {
-    const p = posts.find((x) => x.id == b.dataset.edit),
-      t = prompt("Editar publicação", p.texto);
-    if (t !== null) {
-      await Api.atualizar("posts", p.id, { texto: t });
+  if (button.dataset.edit) {
+    const post = posts.find((item) => item.id == button.dataset.edit);
+    const text = prompt("Editar publicação", post.texto);
+    if (text !== null) {
+      await Api.atualizar("posts", post.id, { texto: text });
       await renderPosts();
     }
   }
-  if (b.dataset.commentDelete && confirmarExclusao()) {
-    await Api.remover("comentarios", b.dataset.commentDelete);
+  if (button.dataset.commentDelete && confirmarExclusao()) {
+    await Api.remover("comentarios", button.dataset.commentDelete);
     await renderPosts();
-    await comments(b.dataset.post);
+    await comments(button.dataset.post);
   }
-  if (b.dataset.commentEdit) {
-    const c = await Api.request("comentarios/" + b.dataset.commentEdit),
-      t = prompt("Editar comentário", c.text);
-    if (t !== null) {
-      await Api.atualizar("comentarios", c.id, { texto: t });
-      await comments(b.dataset.post);
+  if (button.dataset.commentEdit) {
+    const comment = await Api.request(
+      "comentarios/" + button.dataset.commentEdit,
+    );
+    const text = prompt("Editar comentário", comment.text);
+    if (text !== null) {
+      await Api.atualizar("comentarios", comment.id, { texto: text });
+      await comments(button.dataset.post);
     }
   }
-};
-q("btn-publicar").onclick = () => {
-  if (!Sessao.usuario()) return toast("Faça login para publicar.", "erro");
-  q("nova").hidden = !q("nova").hidden;
-  q("texto").focus();
-};
-q("form-post").onsubmit = async (e) => {
-  e.preventDefault();
-  await Api.criar("posts", { texto: q("texto").value });
-  e.target.reset();
-  q("nova").hidden = true;
-  await renderPosts();
-};
+});
+
+q("btn-publicar").addEventListener("click", () => q("texto").focus());
+q("texto").addEventListener("input", atualizarContador);
+q("form-post").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const button = q("submit-post");
+  const feedback = q("post-feedback");
+  feedback.hidden = true;
+  button.disabled = true;
+  try {
+    await Api.criar("posts", { texto: q("texto").value });
+    event.target.reset();
+    atualizarContador();
+    toast("Publicação enviada.", "sucesso");
+    await renderPosts();
+  } catch (error) {
+    feedback.textContent = error.message || "Não foi possível publicar.";
+    feedback.hidden = false;
+    toast(feedback.textContent, "erro");
+  } finally {
+    atualizarContador();
+  }
+});
+
 (async () => {
-  await Sessao.ready;
+  const stopSessionLoading = startLoading(
+    q("posts"),
+    "Verificando sua sessão...",
+  );
+  try {
+    q("posts").setAttribute("aria-busy", "true");
+    await Sessao.ready;
+    if (Sessao.usuario()) {
+      q("nova").hidden = false;
+      q("btn-publicar").hidden = false;
+    } else if (Sessao._status === "unavailable") {
+      q("publicacao-visitante").hidden = false;
+      renderState(
+        q("publicacao-visitante"),
+        "error",
+        "Não foi possível verificar sua sessão.",
+        "Tentar novamente",
+        () => location.reload(),
+      );
+    } else {
+      q("publicacao-visitante").hidden = false;
+    }
+  } finally {
+    stopSessionLoading();
+  }
   await renderPosts();
 })();

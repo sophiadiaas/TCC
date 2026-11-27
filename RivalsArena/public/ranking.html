@@ -12,44 +12,52 @@
     <link rel="stylesheet" href="css/responsividade.css" />
   </head>
   <body data-pagina="ranking">
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
     <header id="navbar" class="navbar" aria-busy="true"></header>
-    <main>
+    <main id="conteudo">
       <div class="page-hero">
         <div class="container">
-          <small>Competitivo</small>
           <h1>Ranking</h1>
-          <p>Acompanhe os jogadores com maior pontuação</p>
+          <p>Compare desempenho e pontuação por jogo e região.</p>
         </div>
       </div>
       <section class="container secao">
         <div class="filtros grid grid-4">
-          <label>Jogos<select id="r-jogo"></select></label>
+          <label for="r-jogo">Jogo<select id="r-jogo"></select></label>
           <div class="filter-note">
             <span>Temporada</span><strong>Histórico completo</strong>
           </div>
-          <label
+          <label for="r-regiao"
             >Região<select id="r-regiao">
               <option value="">Todas</option>
               <option>Brasil</option>
               <option>América Latina</option>
             </select></label
-          ><label
+          ><label for="r-busca"
             >Buscar jogador<input id="r-busca" placeholder="Nome do jogador"
           /></label>
         </div>
         <div class="podio" id="podio" aria-live="polite">
           <p class="state state-loading">Carregando ranking...</p>
         </div>
-        <div class="tabela-wrap">
+        <div
+          class="tabela-wrap"
+          role="region"
+          aria-label="Ranking; tabela rolável horizontalmente"
+          tabindex="0"
+        >
           <table>
+            <caption class="sr-only">
+              Ranking de jogadores
+            </caption>
             <thead>
               <tr>
-                <th>Posição</th>
-                <th>Jogador</th>
-                <th>Vitórias</th>
-                <th>Derrotas</th>
-                <th>Partidas</th>
-                <th>Pontuação</th>
+                <th scope="col">Posição</th>
+                <th scope="col">Jogador</th>
+                <th scope="col">Vitórias</th>
+                <th scope="col">Derrotas</th>
+                <th scope="col">Partidas</th>
+                <th scope="col">Pontuação</th>
               </tr>
             </thead>
             <tbody id="tabela"></tbody>

@@ -12,8 +12,15 @@
     <link rel="stylesheet" href="css/responsividade.css" />
   </head>
   <body data-pagina="perfil">
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
     <header id="navbar" class="navbar" aria-busy="true"></header>
-    <main>
+    <main id="conteudo">
+      <div class="page-hero">
+        <div class="container">
+          <h1>Perfil</h1>
+          <p>Consulte seu histórico, estatísticas e campeonatos.</p>
+        </div>
+      </div>
       <div class="perfil-topo" id="perfil-topo">
         <div class="container">
           <p class="state state-loading">Carregando perfil...</p>
@@ -23,14 +30,22 @@
         <div class="kpis" id="kpis"></div>
         <h2>Histórico de partidas</h2>
         <br />
-        <div class="tabela-wrap">
+        <div
+          class="tabela-wrap"
+          role="region"
+          aria-label="Histórico de partidas; tabela rolável horizontalmente"
+          tabindex="0"
+        >
           <table>
+            <caption class="sr-only">
+              Histórico de partidas do jogador
+            </caption>
             <thead>
               <tr>
-                <th>Oponente</th>
-                <th>Resultado</th>
-                <th>Jogo</th>
-                <th>Data</th>
+                <th scope="col">Oponente</th>
+                <th scope="col">Resultado</th>
+                <th scope="col">Jogo</th>
+                <th scope="col">Data</th>
               </tr>
             </thead>
             <tbody id="historico"></tbody>

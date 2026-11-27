@@ -89,8 +89,63 @@ function toast(message, type) {
   const element = document.createElement("div");
   element.className = "toast " + (type || "");
   element.textContent = message;
+  element.setAttribute("role", type === "erro" ? "alert" : "status");
+  element.setAttribute("aria-live", type === "erro" ? "assertive" : "polite");
   document.body.appendChild(element);
   setTimeout(() => element.remove(), 3200);
+}
+
+function renderState(target, type, message, actionLabel, onAction) {
+  const state = document.createElement("div");
+  state.className = `state state-${type}`;
+  state.setAttribute("role", type === "error" ? "alert" : "status");
+  state.setAttribute("aria-live", type === "error" ? "assertive" : "polite");
+
+  const icon = document.createElement("span");
+  icon.className = `state-icon state-icon-${type}`;
+  icon.setAttribute("aria-hidden", "true");
+  icon.textContent = type === "error" ? "!" : type === "empty" ? "i" : "";
+
+  const copy = document.createElement("span");
+  copy.className = "state-copy";
+  copy.textContent = message;
+  state.append(icon, copy);
+
+  if (actionLabel && onAction) {
+    const action = document.createElement("button");
+    action.className = "btn btn-outline state-action";
+    action.type = "button";
+    action.textContent = actionLabel;
+    action.addEventListener("click", onAction);
+    state.append(action);
+  }
+
+  target.replaceChildren(state);
+  return state;
+}
+
+function startLoading(target, message) {
+  const state = renderState(target, "loading", message);
+  const timeout = setTimeout(() => {
+    if (!state.isConnected) return;
+    const hint = document.createElement("small");
+    hint.className = "state-hint";
+    hint.textContent = "A solicitação está levando mais tempo que o esperado.";
+    state.append(hint);
+  }, 5000);
+  return () => clearTimeout(timeout);
+}
+
+function statusCampeonato(championship) {
+  return (
+    {
+      open: "Inscrições abertas",
+      running: "Em andamento",
+      finished: "Finalizado",
+    }[championship.status_code] ||
+    championship.status ||
+    "Status não informado"
+  );
 }
 
 function abrirModal(html, success) {
@@ -122,7 +177,11 @@ function cardCampeonato(championship) {
         timeStyle: "short",
       })
     : "Data a definir";
-  return `<article class="card"><div class="card-img">${esc(championship.jogo || championship.titulo || championship.nome)}</div><div class="card-corpo"><div class="card-heading"><h3>${esc(championship.nome)}</h3><span class="tag">${esc(championship.status)}</span></div><div class="card-meta"><span><strong>Jogo:</strong> ${esc(championship.jogo || "—")}</span><span><strong>Início:</strong> ${esc(startLabel)}</span><span><strong>Times:</strong> ${championship.inscritos}/${championship.limite}</span></div><a class="btn btn-laranja" href="campeonatos.html?id=${championship.id}">Ver detalhes e inscrição</a></div></article>`;
+  const statusClass =
+    { open: "open", running: "running", finished: "finished" }[
+      championship.status_code
+    ] || "unknown";
+  return `<article class="card"><div class="card-img">${esc(championship.jogo || championship.titulo || championship.nome)}</div><div class="card-corpo"><div class="card-heading"><h3>${esc(championship.nome)}</h3><span class="tag tag-status status-${statusClass}">${esc(statusCampeonato(championship))}</span></div><div class="card-meta"><span><strong>Jogo:</strong> ${esc(championship.jogo || "—")}</span><span><strong>Início:</strong> ${esc(startLabel)}</span><span><strong>Times:</strong> ${championship.inscritos}/${championship.limite}</span></div><a class="btn btn-laranja" href="campeonatos.html?id=${championship.id}">Ver detalhes e inscrição</a></div></article>`;
 }
 
 function cardJogo(game) {
@@ -137,7 +196,7 @@ function montarLayout() {
       .pop()
       .replace(/\.html$/, "");
   const user = Sessao.usuario();
-  const explorePages = ["partidas", "times", "ranking"];
+  const explorePages = ["times", "ranking"];
   const activeLink = (slug) =>
     page === slug
       ? ' class="nav-link ativo" aria-current="page"'
@@ -149,10 +208,10 @@ function montarLayout() {
       ? `<div class="account-area"><button class="account-trigger" id="account-toggle" type="button" aria-expanded="false" aria-controls="account-menu" aria-label="Menu da conta de ${esc(user.usuario)}"><span class="account-avatar" aria-hidden="true">${esc(iniciais(user.nome || user.usuario))}</span><span class="account-name">${esc(user.nome || user.usuario)}</span><span class="menu-caret" aria-hidden="true">▾</span></button><div class="account-menu" id="account-menu" hidden><a href="perfil.html"${page === "perfil" ? ' aria-current="page"' : ""}>Meu perfil</a><button type="button" id="btn-sair">Sair</button></div></div>`
       : Sessao._status === "anonymous"
         ? '<a class="nav-login" href="login.html">Entrar</a><a class="btn nav-signup" href="cadastro.html">Criar conta</a>'
-        : '<span class="nav-status" role="status">Conta indisponível</span>';
-    nav.innerHTML = `<div class="container"><a class="navbar-brand" href="index.html" aria-label="Rivals Arena, página inicial"><img src="assets/images/logo.png" alt=""></a>
+        : '<button class="nav-status" id="retry-session" type="button">Conta indisponível · tentar novamente</button>';
+    nav.innerHTML = `<div class="container"><a class="navbar-brand"${page === "index" ? ' aria-current="page"' : ""} href="index.html" aria-label="Rivals Arena, página inicial"><img src="assets/images/logo.png" alt=""></a>
       <button class="menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-label="Abrir navegação" aria-controls="primary-nav"><span aria-hidden="true">☰</span></button>
-      <nav class="primary-nav nav-links" id="primary-nav" aria-label="Navegação principal"><a href="campeonatos.html"${activeLink("campeonatos")}>Campeonatos</a><a href="jogos.html"${activeLink("jogos")}>Jogos</a><a href="comunidade.html"${activeLink("comunidade")}>Comunidade</a><div class="nav-dropdown${explorePages.includes(page) ? " ativo" : ""}"><button class="nav-dropdown-toggle" id="explore-toggle" type="button" aria-expanded="false" aria-controls="explore-menu"${explorePages.includes(page) ? ' aria-current="location"' : ""}>Explorar <span class="menu-caret" aria-hidden="true">▾</span></button><div class="nav-dropdown-menu" id="explore-menu" hidden><a href="partidas.html"${activeLink("partidas")}>Partidas</a><a href="times.html"${activeLink("times")}>Times</a><a href="ranking.html"${activeLink("ranking")}>Ranking</a></div></div></nav>
+      <nav class="primary-nav nav-links" id="primary-nav" aria-label="Navegação principal"><a href="campeonatos.html"${activeLink("campeonatos")}>Campeonatos</a><a href="jogos.html"${activeLink("jogos")}>Jogos</a><a href="comunidade.html"${activeLink("comunidade")}>Comunidade</a><div class="nav-dropdown${explorePages.includes(page) ? " ativo" : ""}"><button class="nav-dropdown-toggle" id="explore-toggle" type="button" aria-expanded="false" aria-controls="explore-menu"${explorePages.includes(page) ? ' aria-current="location"' : ""}>Explorar <span class="menu-caret" aria-hidden="true">▾</span></button><div class="nav-dropdown-menu" id="explore-menu" hidden><a href="times.html"${activeLink("times")}>Times</a><a href="ranking.html"${activeLink("ranking")}>Ranking</a></div></div></nav>
       <div class="nav-auth">${account}</div></div>`;
     nav.removeAttribute("aria-busy");
 
@@ -233,24 +292,30 @@ function montarLayout() {
     });
     const logout = q("btn-sair");
     if (logout) logout.onclick = () => Sessao.sair();
+    const retrySession = q("retry-session");
+    if (retrySession) retrySession.onclick = () => location.reload();
   }
   const footer = q("footer");
   if (footer) {
     footer.className = "footer";
     footer.innerHTML = `<div class="container footer-inner">
       <a class="brand" href="index.html" aria-label="Rivals Arena, voltar ao início">Rivals<br>Arena</a>
-      <ul class="footer-links">
-        <li><a href="index.html">Início</a></li>
-        <li><a href="campeonatos.html">Campeonatos</a></li>
-        <li><a href="partidas.html">Partidas</a></li>
-        <li><a href="times.html">Times</a></li>
-        <li><a href="jogos.html">Jogos</a></li>
-        <li><a href="ranking.html">Ranking</a></li>
-        <li><a href="comunidade.html">Comunidade</a></li>
-        <li><a href="perfil.html">Perfil</a></li>
-        <li><a href="privacidade.html">Política de privacidade</a></li>
-        <li><a href="api.html">Documentação da API</a></li>
-      </ul>
+      <div class="footer-groups">
+        <section><h2>Navegue</h2><ul class="footer-links">
+          <li><a href="campeonatos.html">Campeonatos</a></li>
+          <li><a href="jogos.html">Jogos</a></li>
+          <li><a href="comunidade.html">Comunidade</a></li>
+          <li><a href="times.html">Times</a></li>
+          <li><a href="ranking.html">Ranking</a></li>
+          <li><a href="perfil.html">Meu perfil</a></li>
+        </ul></section>
+        <section><h2>Institucional</h2><ul class="footer-links">
+          <li><a href="privacidade.html">Privacidade e uso</a></li>
+        </ul></section>
+        <section><h2>Desenvolvedores</h2><ul class="footer-links">
+          <li><a href="api.html">Documentação da API</a></li>
+        </ul></section>
+      </div>
       <p class="copy">© 2026 Rivals Arena</p>
     </div>`;
   }

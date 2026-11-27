@@ -12,33 +12,38 @@
     <link rel="stylesheet" href="css/responsividade.css" />
   </head>
   <body data-pagina="campeonatos">
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
     <header id="navbar" class="navbar" aria-busy="true"></header>
-    <main>
+    <main id="conteudo">
       <div class="page-hero">
         <div class="container">
-          <small>Arena</small>
           <h1>Campeonatos</h1>
-          <p>Escolha uma competição e entre na disputa</p>
+          <p>
+            Encontre uma competição, consulte os detalhes e inscreva seu time.
+          </p>
         </div>
       </div>
       <section class="container secao">
         <h2 class="sr-only">Filtros e campeonatos disponíveis</h2>
         <div class="filtros grid grid-4">
-          <label>Jogos<select id="f-jogo"></select></label
-          ><label
+          <label for="f-jogo">Jogo<select id="f-jogo"></select></label>
+          <label for="f-status"
             >Status<select id="f-status">
               <option value="">Todos</option>
-              <option>Inscrições abertas</option>
-              <option>Em Andamento</option>
-              <option>Finalizada</option>
+              <option value="open">Inscrições abertas</option>
+              <option value="running">Em andamento</option>
+              <option value="finished">Finalizado</option>
             </select></label
-          ><label>Data (a partir de)<input type="date" id="f-data" /></label
-          ><label
+          >
+          <label for="f-data"
+            >Data (a partir de)<input type="date" id="f-data"
+          /></label>
+          <label for="f-part"
             >Tamanho do campeonato<select id="f-part">
               <option value="">Qualquer quantidade</option>
               <option value="16">Até 16 times</option>
               <option value="32">Até 32 times</option>
-              <option value="64">Até 64</option>
+              <option value="64">Até 64 times</option>
             </select></label
           >
         </div>

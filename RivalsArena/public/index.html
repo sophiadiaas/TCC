@@ -14,9 +14,10 @@
     <link rel="stylesheet" href="css/responsividade.css" />
   </head>
   <body data-pagina="index">
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
     <header id="navbar" class="navbar" aria-busy="true"></header>
 
-    <main>
+    <main id="conteudo">
       <section class="hero" id="inicio">
         <img class="hero-logo" src="assets/images/capivara.png" alt="" />
         <div class="container hero-grid">
@@ -37,21 +38,45 @@
             </div>
           </div>
 
-          <aside class="featured" aria-label="Campeonato em destaque">
+          <aside
+            class="featured"
+            id="destaque"
+            aria-label="Campeonato em destaque"
+            aria-busy="true"
+          >
             <p class="featured-status" aria-live="polite">
-              <span class="dot dot-open" id="destaque-dot"></span
+              <span class="dot" id="destaque-dot" aria-hidden="true"></span
               ><span id="destaque-status">Carregando campeonatos</span>
             </p>
-            <h2 id="destaque-nome">Carregando...</h2>
+            <h2 id="destaque-nome" aria-live="polite">Carregando...</h2>
             <p class="featured-count">
-              <strong id="destaque-inscritos">0</strong> /
-              <span id="destaque-limite">0</span> participantes
+              <strong id="destaque-inscritos"
+                ><span class="sr-only">Carregando participantes</span
+                ><span class="skeleton-number" aria-hidden="true"></span
+              ></strong>
+              /
+              <span id="destaque-limite"
+                ><span class="sr-only">Carregando vagas</span
+                ><span class="skeleton-number" aria-hidden="true"></span
+              ></span>
+              participantes
             </p>
-            <div class="bar" role="img" aria-label="Vagas preenchidas">
+            <div
+              class="bar"
+              role="progressbar"
+              aria-label="Vagas preenchidas"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuetext="Carregando inscrições"
+            >
               <span id="destaque-barra" style="width: 0%"></span>
             </div>
             <p class="featured-left">
-              <span id="destaque-vagas">0</span> vagas restantes
+              <span id="destaque-vagas"
+                ><span class="sr-only">Carregando vagas</span
+                ><span class="skeleton-number" aria-hidden="true"></span
+              ></span>
+              vagas restantes
             </p>
             <a
               class="btn btn-primary btn-block"
@@ -64,22 +89,39 @@
       </section>
 
       <section class="stats" aria-label="Estatísticas da plataforma">
-        <dl class="container stats-grid">
+        <dl
+          class="container stats-grid"
+          id="estatisticas"
+          aria-live="polite"
+          aria-busy="true"
+        >
           <div class="stat">
             <dt>Jogadores cadastrados</dt>
-            <dd id="stat-usuarios">0</dd>
+            <dd id="stat-usuarios">
+              <span class="sr-only">Carregando</span
+              ><span class="skeleton-number" aria-hidden="true"></span>
+            </dd>
           </div>
           <div class="stat">
             <dt>Campeonatos cadastrados</dt>
-            <dd id="stat-campeonatos">0</dd>
+            <dd id="stat-campeonatos">
+              <span class="sr-only">Carregando</span
+              ><span class="skeleton-number" aria-hidden="true"></span>
+            </dd>
           </div>
           <div class="stat">
             <dt>Partidas disputadas</dt>
-            <dd id="stat-partidas">0</dd>
+            <dd id="stat-partidas">
+              <span class="sr-only">Carregando</span
+              ><span class="skeleton-number" aria-hidden="true"></span>
+            </dd>
           </div>
           <div class="stat">
             <dt>Jogos disponíveis</dt>
-            <dd id="stat-jogos">0</dd>
+            <dd id="stat-jogos">
+              <span class="sr-only">Carregando</span
+              ><span class="skeleton-number" aria-hidden="true"></span>
+            </dd>
           </div>
         </dl>
       </section>
@@ -106,16 +148,32 @@
 
           <div class="filters" role="group" aria-label="Filtrar por situação">
             <button class="filter is-on" data-filter="all" aria-pressed="true">
-              Todos <span data-count-for="all">0</span>
+              Todos
+              <span data-count-for="all"
+                ><span class="sr-only">Carregando</span
+                ><span class="skeleton-number" aria-hidden="true"></span
+              ></span>
             </button>
             <button class="filter" data-filter="open" aria-pressed="false">
-              Inscrições abertas <span data-count-for="open">0</span>
+              Inscrições abertas
+              <span data-count-for="open"
+                ><span class="sr-only">Carregando</span
+                ><span class="skeleton-number" aria-hidden="true"></span
+              ></span>
             </button>
             <button class="filter" data-filter="live" aria-pressed="false">
-              Em andamento <span data-count-for="running">0</span>
+              Em andamento
+              <span data-count-for="running"
+                ><span class="sr-only">Carregando</span
+                ><span class="skeleton-number" aria-hidden="true"></span
+              ></span>
             </button>
             <button class="filter" data-filter="done" aria-pressed="false">
-              Finalizados <span data-count-for="finished">0</span>
+              Finalizados
+              <span data-count-for="finished"
+                ><span class="sr-only">Carregando</span
+                ><span class="skeleton-number" aria-hidden="true"></span
+              ></span>
             </button>
           </div>
 
@@ -138,34 +196,14 @@
         <div class="container">
           <h2>Jogos da Rivals Arena</h2>
           <p class="section-sub">Jogos disponíveis na arena.</p>
-          <div id="jogos-reais"><p class="empty">Carregando jogos...</p></div>
+          <div id="jogos-reais" aria-live="polite">
+            <p class="state state-loading">Carregando jogos...</p>
+          </div>
         </div>
       </section>
     </main>
 
-    <footer class="footer">
-      <div class="container footer-inner">
-        <a
-          class="brand"
-          href="#inicio"
-          aria-label="Rivals Arena, voltar ao início"
-          >Rivals<br />Arena</a
-        >
-        <ul class="footer-links">
-          <li><a href="#inicio">Início</a></li>
-          <li><a href="#campeonatos">Campeonatos</a></li>
-          <li><a href="partidas.html">Partidas</a></li>
-          <li><a href="times.html">Times</a></li>
-          <li><a href="#jogos">Jogos</a></li>
-          <li><a href="ranking.html">Ranking</a></li>
-          <li><a href="comunidade.html">Comunidade</a></li>
-          <li><a href="perfil.html">Perfil</a></li>
-          <li><a href="privacidade.html">Política de privacidade</a></li>
-          <li><a href="api.html">API</a></li>
-        </ul>
-        <p class="copy">© 2026 Rivals Arena</p>
-      </div>
-    </footer>
+    <footer id="footer"></footer>
 
     <script src="js/main.js"></script>
     <script src="js/home.js"></script>

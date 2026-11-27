@@ -12,30 +12,33 @@
     <link rel="stylesheet" href="css/responsividade.css" />
   </head>
   <body data-pagina="login">
-    <main>
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+    <main id="conteudo">
       <div class="auth">
         <div class="auth-card">
           <img src="assets/images/logo.png" alt="Rivals Arena" />
           <h1>ENTRAR NA ARENA</h1>
           <form id="form-login">
-            <label
+            <label for="login"
               >E-mail ou nome de usuário<input
+                id="login"
                 name="login"
                 autocomplete="username"
-                required /></label
-            ><label
+                required
+            /></label>
+            <label for="senha"
               >Senha<input
+                id="senha"
                 type="password"
                 name="senha"
                 autocomplete="current-password"
-                required /></label
-            ><label style="font-size: 13px"
-              ><input
-                type="checkbox"
-                name="lembrar"
-                style="width: auto; margin-right: 6px"
-              />Lembrar login</label
-            ><button class="btn btn-bloco">Entrar na Arena</button>
+                required
+            /></label>
+            <label class="check-row" for="lembrar"
+              ><input id="lembrar" type="checkbox" name="lembrar" />Lembrar
+              login</label
+            >
+            <button class="btn btn-bloco" type="submit">Entrar na Arena</button>
             <p
               class="auth-feedback"
               id="auth-feedback"

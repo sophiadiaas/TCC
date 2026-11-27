@@ -3,6 +3,8 @@ let times = [],
 const options = () =>
   jogos.map((j) => `<option value="${j.id}">${esc(j.nome)}</option>`).join("");
 async function carregarTimes() {
+  const stopLoading = startLoading(q("times"), "Carregando times...");
+  q("times").setAttribute("aria-busy", "true");
   try {
     times = await Api.listar("times");
     const u = Sessao.usuario();
@@ -26,17 +28,25 @@ async function carregarTimes() {
                 : ""
             }</div></article>`,
         )
-        .join("") ||
-      '<p class="state state-empty">Ainda não há times. Entre na Arena e crie o primeiro.</p>';
+        .join("") || "";
+    if (!times.length)
+      renderState(q("times"), "empty", "Ainda não há times cadastrados.");
   } catch (error) {
-    q("times").innerHTML =
-      `<p class="state state-error" role="alert">${esc(error.message)}</p>`;
-    toast(error.message || "Não foi possível carregar os times.", "erro");
+    renderState(
+      q("times"),
+      "error",
+      error.message || "Não foi possível carregar os times.",
+      "Tentar novamente",
+      carregarTimes,
+    );
+  } finally {
+    stopLoading();
+    q("times").setAttribute("aria-busy", "false");
   }
 }
 function timeForm(t) {
   abrirModal(
-    `<h2>${t ? "Editar" : "Criar"} time</h2><p>Times têm entrada livre. O capitão pode remover membros antes da inscrição.</p><form id="time-form"><label>Nome<input name="nome" required minlength="3" maxlength="60" value="${esc(t?.nome || "")}"></label>${t ? "" : `<label>Jogo<select name="game_id">${options()}</select></label>`}<label>Descrição<textarea name="description" maxlength="500">${esc(t?.description || "")}</textarea></label><button class="btn">Salvar</button><button type="button" class="btn" data-close-modal>Cancelar</button></form>`,
+    `<h2>${t ? "Editar" : "Criar"} time</h2><p>Times têm entrada livre. O capitão pode remover membros antes da inscrição.</p><form id="time-form"><label for="time-nome">Nome<input id="time-nome" name="nome" required minlength="3" maxlength="60" value="${esc(t?.nome || "")}"></label>${t ? "" : `<label for="time-jogo">Jogo<select id="time-jogo" name="game_id">${options()}</select></label>`}<label for="time-descricao">Descrição<textarea id="time-descricao" name="description" maxlength="500">${esc(t?.description || "")}</textarea></label><button class="btn" type="submit">Salvar</button><button type="button" class="btn btn-outline" data-close-modal>Cancelar</button></form>`,
   );
   q("time-form").onsubmit = async (e) => {
     e.preventDefault();
@@ -63,18 +73,31 @@ q("times").onclick = async (e) => {
     await Api.request(`times/${id}/membros/${b.dataset.user}`, "DELETE");
   await carregarTimes();
 };
-(async () => {
+async function iniciarTimes() {
+  const stopSessionLoading = startLoading(
+    q("times"),
+    "Preparando a página de times...",
+  );
+  q("times").setAttribute("aria-busy", "true");
   try {
     await Sessao.ready;
     jogos = await Api.listar("jogos");
     q("time-acoes").innerHTML = Sessao.usuario()
       ? '<button class="btn" id="novo-time">Criar time</button><p class="ajuda">Capitães organizam o elenco; integrantes podem entrar ou sair antes da inscrição em campeonatos.</p>'
-      : '<p class="state">Faça <a href="login.html">login</a> para criar ou entrar em um time.</p>';
+      : '<div class="state guest-prompt"><p>Entre para criar um time ou solicitar entrada em uma equipe.</p><div class="acoes"><a class="btn btn-laranja" href="login.html">Entrar</a><a class="btn btn-outline" href="cadastro.html">Criar conta</a></div></div>';
     if (q("novo-time")) q("novo-time").onclick = () => timeForm();
     await carregarTimes();
   } catch (error) {
-    q("times").innerHTML =
-      `<p class="state state-error" role="alert">${esc(error.message)}</p>`;
-    toast(error.message || "Não foi possível abrir os times.", "erro");
+    renderState(
+      q("times"),
+      "error",
+      error.message || "Não foi possível abrir os times.",
+      "Tentar novamente",
+      () => location.reload(),
+    );
+  } finally {
+    stopSessionLoading();
+    q("times").setAttribute("aria-busy", "false");
   }
-})();
+}
+iniciarTimes();

@@ -12,13 +12,15 @@
     <link rel="stylesheet" href="css/responsividade.css" />
   </head>
   <body data-pagina="comunidade">
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
     <header id="navbar" class="navbar" aria-busy="true"></header>
-    <main>
+    <main id="conteudo">
       <div class="page-hero">
         <div class="container">
-          <small>Comunidade</small>
           <h1>Comunidade</h1>
-          <p>Compartilhe jogadas, estratégias e habilidades</p>
+          <p>
+            Compartilhe jogadas, estratégias e novidades com outros jogadores.
+          </p>
         </div>
       </div>
       <section class="container secao">
@@ -26,27 +28,48 @@
           <div>
             <h2>Publicações</h2>
             <p class="section-sub">
-              Compartilhe dicas, partidas e novidades com a comunidade.
+              Converse com a comunidade e acompanhe as publicações recentes.
             </p>
           </div>
-          <button class="btn" id="btn-publicar">Criar publicação</button>
+          <button class="btn" id="btn-publicar" type="button" hidden>
+            Ir para o campo de publicação
+          </button>
         </div>
-        <div id="posts" aria-live="polite">
-          <p class="state state-loading">Carregando publicações...</p>
-        </div>
-        <div class="caixa" id="nova" hidden>
-          <h2 class="laranja" style="font-weight: 400">Criar publicação</h2>
+        <div class="post-composer caixa" id="nova" hidden>
           <form id="form-post">
-            <label
-              >Texto<textarea
-                id="texto"
-                rows="3"
-                maxlength="1000"
-                required
-                placeholder="O que você quer compartilhar?"
-              ></textarea></label
-            ><button class="btn btn-laranja">Publicar</button>
+            <label for="texto">Sua publicação</label>
+            <textarea
+              id="texto"
+              name="texto"
+              rows="3"
+              maxlength="1000"
+              required
+              aria-describedby="contador-texto"
+              placeholder="O que você quer compartilhar?"
+            ></textarea>
+            <div class="composer-actions">
+              <span
+                class="character-count"
+                id="contador-texto"
+                aria-live="polite"
+                >0 / 1000</span
+              >
+              <button class="btn btn-laranja" id="submit-post" disabled>
+                Publicar
+              </button>
+            </div>
+            <p class="form-feedback" id="post-feedback" role="alert" hidden></p>
           </form>
+        </div>
+        <div class="caixa guest-prompt" id="publicacao-visitante" hidden>
+          <p>Entre na sua conta para publicar e interagir com a comunidade.</p>
+          <div class="acoes">
+            <a class="btn btn-laranja" href="login.html">Entrar</a>
+            <a class="btn btn-outline" href="cadastro.html">Criar conta</a>
+          </div>
+        </div>
+        <div id="posts" aria-live="polite" aria-busy="true">
+          <p class="state state-loading">Carregando publicações...</p>
         </div>
       </section>
     </main>

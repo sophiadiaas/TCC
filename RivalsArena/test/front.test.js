@@ -45,13 +45,13 @@ test("front integrado: renderização, times, campeonatos, perfil, posts e comen
     }
   }
   const resources = new LocalResources();
-  async function page(path) {
+  async function page(path, sessionJar = jar) {
     const vc = new VirtualConsole();
     vc.on("jsdomError", (err) => {
       if (!err.message.includes("navigation")) errors.push(err.message);
     });
     const dom = await JSDOM.fromURL(base + "/" + path, {
-      cookieJar: jar,
+      cookieJar: sessionJar,
       resources,
       runScripts: "dangerously",
       virtualConsole: vc,
@@ -59,10 +59,13 @@ test("front integrado: renderização, times, campeonatos, perfil, posts e comen
         w.fetch = async (url, opt = {}) => {
           const res = await fetch(new URL(url, base), {
             ...opt,
-            headers: { ...opt.headers, cookie: jar.getCookieStringSync(base) },
+            headers: {
+              ...opt.headers,
+              cookie: sessionJar.getCookieStringSync(base),
+            },
           });
           const cookie = res.headers.get("set-cookie");
-          if (cookie) jar.setCookieSync(cookie, base);
+          if (cookie) sessionJar.setCookieSync(cookie, base);
           return res;
         };
         w.confirm = () => true;
@@ -80,12 +83,36 @@ test("front integrado: renderização, times, campeonatos, perfil, posts e comen
   await wait(
     () => home.document.querySelector("#stat-usuarios")?.textContent === "1",
   );
+  assert.ok(home.document.querySelector(".account-trigger"));
+  assert.equal(
+    home.document.querySelectorAll('#primary-nav a[href="partidas.html"]')
+      .length,
+    0,
+  );
+  assert.deepEqual(
+    [...home.document.querySelectorAll("#explore-menu a")].map(
+      (link) => link.textContent,
+    ),
+    ["Times", "Ranking"],
+  );
   await wait(() => home.document.querySelectorAll("#jogos-reais .game").length);
   assert.equal(home.document.querySelectorAll("#jogos-reais .game").length, 3);
   assert.equal(home.document.querySelectorAll("#lista-itens .row").length, 0);
   assert.equal(
     home.document.querySelector("#destaque-nome").textContent,
     "Nenhum campeonato cadastrado",
+  );
+  const guestProfile = await page("perfil.html", new CookieJar());
+  await wait(
+    () =>
+      guestProfile.document.querySelector("#perfil-topo .guest-prompt") &&
+      guestProfile.document.querySelector(".nav-signup"),
+  );
+  assert.ok(
+    guestProfile.document.querySelector('#perfil-topo a[href="login.html"]'),
+  );
+  assert.ok(
+    guestProfile.document.querySelector('#perfil-topo a[href="cadastro.html"]'),
   );
   const times = await page("times.html");
   await wait(() => times.document.querySelector("#novo-time"));
@@ -143,9 +170,7 @@ test("front integrado: renderização, times, campeonatos, perfil, posts e comen
     cup.document.querySelector("#modal").textContent.includes("1/8 times"),
   );
   const comm = await page("comunidade.html");
-  await wait(() =>
-    comm.document.querySelector("#posts").textContent.includes("comunidade"),
-  );
+  await wait(() => comm.document.querySelector("#posts .state-empty"));
   comm.document.querySelector("#btn-publicar").click();
   comm.document.querySelector("#texto").value = "<script>texto seguro</script>";
   comm.document

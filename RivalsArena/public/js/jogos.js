@@ -1,4 +1,9 @@
 (async () => {
+  const stopLoading = startLoading(
+    q("lista-jogos"),
+    "Carregando catálogo de jogos...",
+  );
+  q("lista-jogos").setAttribute("aria-busy", "true");
   try {
     const jogos = await Api.listar("jogos"),
       id = new URLSearchParams(location.search).get("id"),
@@ -28,9 +33,13 @@
       }
     }
     if (!j) {
-      q("lista-jogos").innerHTML =
-        jogos.map(cardJogo).join("") ||
-        '<p class="state state-empty">O catálogo ainda não possui jogos.</p>';
+      q("lista-jogos").innerHTML = jogos.map(cardJogo).join("");
+      if (!jogos.length)
+        renderState(
+          q("lista-jogos"),
+          "empty",
+          "O catálogo ainda não possui jogos.",
+        );
       await renderActions();
       return;
     }
@@ -45,13 +54,21 @@
     await renderActions(j);
   } catch (error) {
     const target = q("lista-jogos") || q("detalhe");
-    target.innerHTML = `<p class="state state-error" role="alert">${esc(error.message)}</p>`;
-    toast(error.message || "Não foi possível carregar o catálogo.", "erro");
+    renderState(
+      target,
+      "error",
+      error.message || "Não foi possível carregar o catálogo.",
+      "Tentar novamente",
+      () => location.reload(),
+    );
+  } finally {
+    stopLoading();
+    q("lista-jogos").setAttribute("aria-busy", "false");
   }
 })();
 function formJogo(j) {
   abrirModal(
-    `<h2>${j ? "Editar" : "Adicionar"} jogo</h2><form id="jogo-form"><label>Nome<input name="nome" minlength="3" maxlength="60" required value="${esc(j?.nome || "")}"></label><label>Gênero<input name="genero" required value="${esc(j?.genero || "")}"></label><label>Descrição<textarea name="resumo" minlength="5" maxlength="2000" required>${esc(j?.resumo || "")}</textarea></label><label>Plataformas<input name="plataformas" required value="${esc(j?.plataformas || "")}"></label><button class="btn">Salvar</button><button type="button" class="btn" data-close-modal>Cancelar</button></form>`,
+    `<h2>${j ? "Editar" : "Adicionar"} jogo</h2><form id="jogo-form"><label for="jogo-nome">Nome<input id="jogo-nome" name="nome" minlength="3" maxlength="60" required value="${esc(j?.nome || "")}"></label><label for="jogo-genero">Gênero<input id="jogo-genero" name="genero" required value="${esc(j?.genero || "")}"></label><label for="jogo-resumo">Descrição<textarea id="jogo-resumo" name="resumo" minlength="5" maxlength="2000" required>${esc(j?.resumo || "")}</textarea></label><label for="jogo-plataformas">Plataformas<input id="jogo-plataformas" name="plataformas" required value="${esc(j?.plataformas || "")}"></label><button class="btn" type="submit">Salvar</button><button type="button" class="btn btn-outline" data-close-modal>Cancelar</button></form>`,
   );
   q("jogo-form").onsubmit = async (e) => {
     e.preventDefault();

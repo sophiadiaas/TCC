@@ -2,27 +2,36 @@ const tid = Number(new URLSearchParams(location.search).get("campeonato"));
 let campeonato;
 async function render() {
   campeonato = await Api.request("campeonatos/" + tid);
-  q("titulo-chave").textContent = campeonato.nome;
+  q("nome-campeonato").textContent = campeonato.nome;
   const matches = campeonato.partidas,
     u = Sessao.usuario();
   const rounds = [...new Set(matches.map((m) => m.round))].sort(
     (a, b) => a - b,
   );
-  q("chave").innerHTML = rounds.length
-    ? rounds
-        .map(
-          (r) =>
-            `<section class="round"><h2>${r === Math.max(...rounds) ? "Final" : "Rodada " + r}</h2>${matches
-              .filter((m) => m.round === r)
-              .map(
-                (m) =>
-                  `<article class="match"><small>Partida #${m.id} · ${{ waiting: "Aguardando classificados", ready: "Pronta", done: "Encerrada", bye: "Avanço automático" }[m.status]}</small><p class="${m.winner_id === m.team_a && m.team_a ? "winner" : ""}">${esc(m.nome_a || "A definir")} <b>${m.score_a ?? "—"}</b></p><p class="${m.winner_id === m.team_b && m.team_b ? "winner" : ""}">${esc(m.nome_b || "A definir")} <b>${m.score_b ?? "—"}</b></p>${m.scheduled_at ? `<small>${esc(new Date(m.scheduled_at).toLocaleString("pt-BR"))}</small>` : ""}${m.stream_url ? `<a href="${esc(m.stream_url)}" target="_blank" rel="noopener noreferrer">Assistir transmissão ↗</a>` : ""}${u?.id === campeonato.owner_id && ["ready", "waiting"].includes(m.status) ? `<button class="btn" data-schedule="${m.id}">Agendar / transmissão</button>${m.status === "ready" ? `<button class="btn" data-result="${m.id}">Registrar resultado</button>` : ""}` : ""}</article>`,
-              )
-              .join("")}</section>`,
-        )
-        .join("")
-    : '<p class="state state-empty">A chave ainda não foi gerada. Volte aos <a href="campeonatos.html">detalhes do campeonato</a>.</p>';
+  if (rounds.length) {
+    q("chave").innerHTML = rounds
+      .map(
+        (r) =>
+          `<section class="round"><h2>${r === Math.max(...rounds) ? "Final" : "Rodada " + r}</h2>${matches
+            .filter((m) => m.round === r)
+            .map(
+              (m) =>
+                `<article class="match"><small>Partida #${m.id} · ${{ waiting: "Aguardando classificados", ready: "Pronta", done: "Encerrada", bye: "Avanço automático" }[m.status] || "Status indisponível"}</small><p class="${m.winner_id === m.team_a && m.team_a ? "winner" : ""}">${esc(m.nome_a || "A definir")} <b>${m.score_a ?? "—"}</b></p><p class="${m.winner_id === m.team_b && m.team_b ? "winner" : ""}">${esc(m.nome_b || "A definir")} <b>${m.score_b ?? "—"}</b></p>${m.scheduled_at ? `<small>${esc(new Date(m.scheduled_at).toLocaleString("pt-BR"))}</small>` : ""}${m.stream_url ? `<a href="${esc(m.stream_url)}" target="_blank" rel="noopener noreferrer">Assistir transmissão ↗</a>` : ""}${u?.id === campeonato.owner_id && ["ready", "waiting"].includes(m.status) ? `<button class="btn" data-schedule="${m.id}">Agendar / transmissão</button>${m.status === "ready" ? `<button class="btn" data-result="${m.id}">Registrar resultado</button>` : ""}` : ""}</article>`,
+            )
+            .join("")}</section>`,
+      )
+      .join("");
+  } else {
+    renderState(
+      q("chave"),
+      "empty",
+      "A chave ainda não foi gerada. Consulte os detalhes do campeonato para saber quando ela estará disponível.",
+      "Ver detalhes do campeonato",
+      () => (location.href = "campeonatos.html?id=" + tid),
+    );
+  }
   q("voltar-camp").href = "campeonatos.html?id=" + tid;
+  q("voltar-camp").textContent = "← Voltar aos detalhes do campeonato";
   let reset = q("reset-chave");
   if (reset) reset.remove();
   if (
@@ -37,7 +46,7 @@ async function render() {
     q("chave").before(reset);
     reset.onclick = () => {
       abrirModal(
-        '<h2>Reabrir campeonato</h2><p>Toda a chave sem resultados será removida. As inscrições serão mantidas.</p><form id="reset-form"><label>Novo início (horário local)<input type="datetime-local" name="starts_at" required></label><button class="btn">Reabrir</button><button type="button" class="btn" data-close-modal>Cancelar</button></form>',
+        '<h2>Reabrir campeonato</h2><p>Toda a chave sem resultados será removida. As inscrições serão mantidas.</p><form id="reset-form"><label for="reset-inicio">Novo início (horário local)<input id="reset-inicio" type="datetime-local" name="starts_at" required></label><button class="btn" type="submit">Reabrir</button><button type="button" class="btn btn-outline" data-close-modal>Cancelar</button></form>',
       );
       q("reset-form").onsubmit = async (e) => {
         e.preventDefault();
@@ -60,7 +69,7 @@ q("chave").onclick = (e) => {
   if (!m) return;
   const result = !!b.dataset.result;
   abrirModal(
-    `<h2>${result ? "Registrar resultado" : "Agendar partida"}</h2><p>${esc(m.nome_a || "A definir")} × ${esc(m.nome_b || "A definir")}</p>${result ? "<p>Confira o placar: resultados confirmados são definitivos e classificam o vencedor.</p>" : ""}<form id="match-form">${result ? '<label>Placar A<input name="score_a" type="number" min="0" max="999" required></label><label>Placar B<input name="score_b" type="number" min="0" max="999" required></label>' : `<label>Data e horário local (opcional)<input name="scheduled_at" type="datetime-local"></label><label>URL HTTPS da transmissão<input type="url" name="stream_url" value="${esc(m.stream_url)}" placeholder="https://www.twitch.tv/canal"></label>`}<button class="btn">Confirmar</button><button type="button" class="btn" data-close-modal>Cancelar</button></form>`,
+    `<h2>${result ? "Registrar resultado" : "Agendar partida"}</h2><p>${esc(m.nome_a || "A definir")} × ${esc(m.nome_b || "A definir")}</p>${result ? "<p>Confira o placar: resultados confirmados são definitivos e classificam o vencedor.</p>" : ""}<form id="match-form">${result ? '<label for="score-a">Placar A<input id="score-a" name="score_a" type="number" min="0" max="999" required></label><label for="score-b">Placar B<input id="score-b" name="score_b" type="number" min="0" max="999" required></label>' : `<label for="match-scheduled">Data e horário local (opcional)<input id="match-scheduled" name="scheduled_at" type="datetime-local"></label><label for="match-stream">URL HTTPS da transmissão<input id="match-stream" type="url" name="stream_url" value="${esc(m.stream_url)}" placeholder="https://www.twitch.tv/canal"></label>`}<button class="btn" type="submit">Confirmar</button><button type="button" class="btn btn-outline" data-close-modal>Cancelar</button></form>`,
   );
   if (!result && m.scheduled_at)
     q("match-form").elements.namedItem("scheduled_at").value = new Date(
@@ -81,21 +90,50 @@ q("chave").onclick = (e) => {
       await Api.atualizar("partidas", m.id, data);
     }
     fecharModal();
-    await render();
+    await atualizarChave();
   };
 };
-(async () => {
-  await Sessao.ready;
-  if (!tid) {
-    q("chave").innerHTML =
-      '<p class="state state-empty">Para ver partidas e resultados, escolha um <a href="campeonatos.html">campeonato</a>.</p>';
-    return;
-  }
+async function atualizarChave() {
+  const stopLoading = startLoading(q("chave"), "Carregando chaveamento...");
+  q("chave").setAttribute("aria-busy", "true");
   try {
     await render();
   } catch (error) {
-    q("chave").innerHTML =
-      `<p class="state state-error" role="alert">${esc(error.message)}</p>`;
-    toast(error.message || "Não foi possível carregar o chaveamento.", "erro");
+    renderState(
+      q("chave"),
+      "error",
+      error.message || "Não foi possível carregar o chaveamento.",
+      "Tentar novamente",
+      atualizarChave,
+    );
+  } finally {
+    stopLoading();
+    q("chave").setAttribute("aria-busy", "false");
   }
+}
+
+(async () => {
+  const stopSessionLoading = startLoading(
+    q("chave"),
+    "Preparando o chaveamento...",
+  );
+  try {
+    await Sessao.ready;
+  } finally {
+    stopSessionLoading();
+  }
+  if (!tid) {
+    q("nome-campeonato").textContent =
+      "Escolha um campeonato para ver as partidas e os resultados.";
+    q("voltar-camp").textContent = "← Ver campeonatos";
+    renderState(
+      q("chave"),
+      "empty",
+      "O chaveamento depende de um campeonato específico.",
+      "Escolher campeonato",
+      () => (location.href = "campeonatos.html"),
+    );
+    return;
+  }
+  await atualizarChave();
 })();
